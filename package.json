@@ -1,0 +1,48 @@
+{
+    "name": "@sector-labs/seo-slip",
+    "version": "1.0.0",
+    "description": "Catches SEO regressions by sampling and checking a website against a set of rules",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "format": "prettier --write '**/*.{js,css,json,md}'"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/SectorLabs/seo-slip.git"
+    },
+    "keywords": [
+        "seo",
+        "slip",
+        "regression",
+        "rules"
+    ],
+    "author": "Cristi Ingineru <ingineru@sectorlabs.ro>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/SectorLabs/seo-slip/issues"
+    },
+    "homepage": "https://github.com/SectorLabs/seo-slip#readme",
+    "files": [
+        "src",
+        "index.js",
+        "package.json",
+        "LICENSE",
+        "*.md",
+        "!node_modules",
+        "!.gitignore",
+        "!.npmrc",
+        "!.prettierrc.json",
+        "!.prettierignore"
+    ],
+    "dependencies": {
+        "csv-parse": "^4.15.3",
+        "node-fetch": "^2.6.1",
+        "robots-parser": "^2.3.0",
+        "simplecrawler": "^1.1.9",
+        "xpath-html": "^1.0.2"
+    },
+    "devDependencies": {
+        "prettier": "2.2.1"
+    }
+}
