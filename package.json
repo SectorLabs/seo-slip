@@ -4,7 +4,7 @@
     "description": "Catches SEO regressions by sampling and checking a website against a set of rules",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
+        "test": "mocha \"./test/**/*.test.js\"",
         "format": "prettier --write '**/*.{js,css,json,md}'"
     },
     "repository": {
@@ -43,6 +43,7 @@
         "xpath-html": "^1.0.2"
     },
     "devDependencies": {
+        "mocha": "^9.1.4",
         "prettier": "2.2.1"
     }
 }

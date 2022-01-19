@@ -40,6 +40,7 @@ module.exports = (statusCodeRules) => {
             return {
                 code: queueItem.stateData.code,
                 path: queueItem.path,
+                url: queueItem.url,
                 referrer: queueItem.referrer,
             };
         },
