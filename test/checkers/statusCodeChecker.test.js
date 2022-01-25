@@ -1,37 +1,7 @@
 const assert = require('assert');
-const statusCodeChecker = require('../../src/checkers/statusCodeChecker');
+const { statusCodeChecker } = require('../../src/checkers');
 
-const buildItemData = (code, path, url) => {
-    const queueItem = {
-        stateData: {
-            code: code,
-        },
-        url: url || `https://www.domain.com${path}`,
-        path: path,
-    };
-
-    const responseBody = undefined;
-
-    const response = undefined;
-
-    return { queueItem, responseBody, response };
-};
-
-const run = (checker, itemData) => {
-    const analysis =
-        checker.analysis &&
-        checker.analysis(
-            itemData.queueItem,
-            itemData.responseBody,
-            itemData.response
-        );
-    const report = checker.report && checker.report(analysis);
-    const result = checker.check && checker.check(analysis);
-    const finalResult =
-        checker.finalCheck && checker.finalCheck([analysis], report);
-
-    return { report, result, finalResult };
-};
+const { buildItemData, run } = require('..');
 
 describe('statusCodeChecker', function () {
     const rules = {
@@ -83,7 +53,7 @@ describe('statusCodeChecker', function () {
         [200, '/207or208/path/anything/regexp', true, []],
     ].forEach(([code, path, passed, messagePatterns]) => {
         it(`should check the ${code} status code of ${path}`, function () {
-            const itemData = buildItemData(code, path);
+            const itemData = buildItemData({ code, path });
 
             const { report, result } = run(statusCodeChecker(rules), itemData);
 
