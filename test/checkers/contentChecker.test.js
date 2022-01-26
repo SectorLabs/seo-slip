@@ -103,7 +103,9 @@ describe('contentChecker', function () {
 
             const itemData = buildItemData({ url, content });
 
-            const { result } = run(contentChecker(rules), itemData);
+            const {
+                results: [result],
+            } = run(contentChecker(rules), [itemData]);
 
             assert.equal(result.passed, passed);
             messagePatterns.forEach((messagePattern, index) => {
@@ -119,7 +121,9 @@ describe('contentChecker', function () {
 
         const itemData = buildItemData({ url, content, headers });
 
-        const { result } = run(contentChecker(rules), itemData);
+        const {
+            results: [result],
+        } = run(contentChecker(rules), [itemData]);
 
         assert.equal(result.passed, true);
     });
@@ -130,7 +134,9 @@ describe('contentChecker', function () {
 
         const itemData = buildItemData({ url, content });
 
-        const { result } = run(contentChecker(rules), itemData);
+        const {
+            results: [result],
+        } = run(contentChecker(rules), [itemData]);
 
         assert.equal(result.passed, true);
     });

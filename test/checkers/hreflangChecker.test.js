@@ -98,7 +98,9 @@ describe('hreflangChecker', function () {
 
             const itemData = buildItemData({ url, content });
 
-            const { result } = run(hreflangChecker(rules), itemData);
+            const {
+                results: [result],
+            } = run(hreflangChecker(rules), [itemData]);
 
             assert.equal(result.passed, passed);
             messagePatterns.forEach((messagePattern, index) => {
@@ -114,7 +116,9 @@ describe('hreflangChecker', function () {
 
         const itemData = buildItemData({ url, content, headers });
 
-        const { result } = run(hreflangChecker(rules), itemData);
+        const {
+            results: [result],
+        } = run(hreflangChecker(rules), [itemData]);
 
         assert.equal(result.passed, true);
     });
@@ -125,7 +129,9 @@ describe('hreflangChecker', function () {
 
         const itemData = buildItemData({ url, content });
 
-        const { result } = run(hreflangChecker(rules), itemData);
+        const {
+            results: [result],
+        } = run(hreflangChecker(rules), [itemData]);
 
         assert.equal(result.passed, true);
     });

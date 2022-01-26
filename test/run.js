@@ -1,20 +1,43 @@
-const run = (checker, itemData) => {
-    const analysis =
-        checker.analysis &&
-        checker.analysis(
-            itemData.queueItem,
-            itemData.responseBody,
-            itemData.response
-        );
-    const report = checker.report && checker.report(analysis);
-    const result = (checker.check && checker.check(analysis)) || {
-        passed: true,
-        messages: [],
-    };
-    const finalResult =
-        checker.finalCheck && checker.finalCheck([analysis], report);
+const newEmptyReport = () => ({});
 
-    return { report, result, finalResult };
+const newEmptyItemResult = () => ({ passed: true, messages: [] });
+
+const run = (checker, itemsData) => {
+    const analyses = [];
+    let report = [];
+    let results = [];
+
+    for (let i = 0; i < itemsData.length; i++) {
+        const itemData = itemsData[i];
+        const analysis =
+            checker.analysis &&
+            checker.analysis(
+                itemData.queueItem,
+                itemData.responseBody,
+                itemData.response
+            );
+        analyses.push(analysis);
+
+        const shouldStop =
+            (checker.shouldStop && checker.shouldStop()) || false;
+        if (shouldStop) {
+            break;
+        }
+
+        const itemReport =
+            (checker.report && checker.report(analysis)) || newEmptyReport();
+        report.push(itemReport);
+
+        const itemResult =
+            (checker.check && checker.check(analysis)) || newEmptyItemResult();
+        results.push(itemResult);
+    }
+
+    const finalResult =
+        (checker.finalCheck && checker.finalCheck(analyses, report)) ||
+        newEmptyReport();
+
+    return { report, results, finalResult };
 };
 
 module.exports = run;

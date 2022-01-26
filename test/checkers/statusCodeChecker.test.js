@@ -55,10 +55,13 @@ describe('statusCodeChecker', function () {
         it(`should check the ${code} status code of ${path}`, function () {
             const itemData = buildItemData({ code, path });
 
-            const { report, result } = run(statusCodeChecker(rules), itemData);
+            const {
+                report: [itemReport],
+                results: [result],
+            } = run(statusCodeChecker(rules), [itemData]);
 
-            assert.equal(report.code, code);
-            assert.equal(report.path, path);
+            assert.equal(itemReport.code, code);
+            assert.equal(itemReport.path, path);
 
             assert.equal(result.passed, passed);
             messagePatterns.forEach((messagePattern, index) => {

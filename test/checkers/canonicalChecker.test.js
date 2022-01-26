@@ -84,9 +84,12 @@ describe('canonicalChecker', function () {
 
             const itemData = buildItemData({ url, content });
 
-            const { report, result } = run(canonicalChecker(rules), itemData);
+            const {
+                report: [itemReport],
+                results: [result],
+            } = run(canonicalChecker(rules), [itemData]);
 
-            assert.equal(report.canonicalUrl, canonicalUrl);
+            assert.equal(itemReport.canonicalUrl, canonicalUrl);
             assert.equal(result.passed, passed);
             messagePatterns.forEach((messagePattern, index) => {
                 assert.match(result.messages[index], messagePattern);
@@ -103,9 +106,12 @@ describe('canonicalChecker', function () {
 
         const itemData = buildItemData({ url, content });
 
-        const { report, result } = run(canonicalChecker(rules), itemData);
+        const {
+            report: [itemReport],
+            results: [result],
+        } = run(canonicalChecker(rules), [itemData]);
 
-        assert.equal(report.canonicalUrl, '');
+        assert.equal(itemReport.canonicalUrl, '');
         assert.equal(result.passed, false);
         assert.match(result.messages[0], /expected.+actual.+/i);
     });
@@ -120,9 +126,12 @@ describe('canonicalChecker', function () {
 
         const itemData = buildItemData({ url, content, headers });
 
-        const { report, result } = run(canonicalChecker(rules), itemData);
+        const {
+            report: [itemReport],
+            results: [result],
+        } = run(canonicalChecker(rules), [itemData]);
 
-        assert.equal(report.canonicalUrl, '');
+        assert.equal(itemReport.canonicalUrl, '');
         assert.equal(result.passed, true);
     });
 
@@ -132,9 +141,12 @@ describe('canonicalChecker', function () {
 
         const itemData = buildItemData({ url, content });
 
-        const { report, result } = run(canonicalChecker(rules), itemData);
+        const {
+            report: [itemReport],
+            results: [result],
+        } = run(canonicalChecker(rules), [itemData]);
 
-        assert.equal(report.canonicalUrl, '');
+        assert.equal(itemReport.canonicalUrl, '');
         assert.equal(result.passed, true);
     });
 });

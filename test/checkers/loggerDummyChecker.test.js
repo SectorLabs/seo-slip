@@ -14,13 +14,16 @@ describe('loggerDummyChecker', function () {
         };
         const itemData = buildItemData({ url, stateData });
 
-        const { report, result } = run(loggerDummyChecker(), itemData);
+        const {
+            report: [itemReport],
+            results: [result],
+        } = run(loggerDummyChecker(), [itemData]);
 
-        assert.equal(report.url, url);
-        assert.equal(report.__requestLatency, stateData.requestLatency);
-        assert.equal(report.__downloadTime, stateData.downloadTime);
-        assert.equal(report.__requestTime, stateData.requestTime);
-        assert.equal(report.__actualDataSize, stateData.actualDataSize);
+        assert.equal(itemReport.url, url);
+        assert.equal(itemReport.__requestLatency, stateData.requestLatency);
+        assert.equal(itemReport.__downloadTime, stateData.downloadTime);
+        assert.equal(itemReport.__requestTime, stateData.requestTime);
+        assert.equal(itemReport.__actualDataSize, stateData.actualDataSize);
 
         assert.equal(result.passed, true);
     });
