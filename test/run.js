@@ -7,7 +7,10 @@ const run = (checker, itemData) => {
             itemData.response
         );
     const report = checker.report && checker.report(analysis);
-    const result = checker.check && checker.check(analysis);
+    const result = (checker.check && checker.check(analysis)) || {
+        passed: true,
+        messages: [],
+    };
     const finalResult =
         checker.finalCheck && checker.finalCheck([analysis], report);
 
