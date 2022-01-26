@@ -101,7 +101,7 @@ Example rules:
     {
         "url": "(.*.site.com)/(..)/search/(.+)(\?.+)?",
         "expected": {
-            "//h1/text()": ",^(.|\n){5,300}$",
+            "//h1/text()": "^(.|\n){5,300}$",
             "//meta[@name=\"description\"]/@content": "^(.|\n){5,500}$'"
         }
     },
