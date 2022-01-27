@@ -28,9 +28,10 @@ module.exports = (metaRobotsRules) => {
                       ...toBooleanRobotsDirective(
                           getRobotsContent(responseBody)
                       ),
+                      url: queueItem.url,
                       isHtmlDocument: isHtmlDoc,
                   }
-                : {};
+                : { isHtmlDocument: isHtmlDoc };
         },
         report: (analysis) => {
             if (analysis.isHtmlDocument) {
@@ -42,9 +43,11 @@ module.exports = (metaRobotsRules) => {
             return {};
         },
         check: (analysis) => {
-            const rule = (metaRobotsRules || []).find((rule) =>
-                analysis.url.match(rule.path)
-            );
+            const rule = analysis.isHtmlDocument
+                ? (metaRobotsRules || []).find((rule) =>
+                      analysis.url.match(rule.path)
+                  )
+                : null;
             let result = {
                 passed: true,
                 messages: [],
