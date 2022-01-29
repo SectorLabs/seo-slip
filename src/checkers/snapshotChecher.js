@@ -8,7 +8,7 @@ module.exports = (snapshotRules, previousReport) => {
     }, {});
 
     return {
-        finalCheck: (analysis, report) => {
+        finalCheck: (analyses, report) => {
             let result = {
                 passed: true,
                 messages: [],

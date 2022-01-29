@@ -8,7 +8,7 @@ module.exports = (maxPageCount) => {
         shouldStop: () => {
             return pageCount > maxPageCount;
         },
-        finalCheck: (analyses) => {
+        finalCheck: (analyses, report) => {
             const passed = pageCount <= maxPageCount;
             return {
                 passed: passed,
