@@ -12,9 +12,7 @@ module.exports = (maxPageCount) => {
             const passed = pageCount <= maxPageCount;
             return {
                 passed: passed,
-                messages: passed
-                    ? []
-                    : [`Limit maxPageCount=${maxPageCount} exceeded`],
+                messages: passed ? [] : [`Limit maxPageCount=${maxPageCount} exceeded`],
             };
         },
     };

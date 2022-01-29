@@ -6,9 +6,7 @@ module.exports = (contentRules) => {
     return {
         analysis: (queueItem, responseBody, response) => {
             const isHtmlDoc = isHtmlDocument(responseBody, response);
-            const rule = (contentRules || []).find((rule) =>
-                queueItem.url.match(rule.url)
-            );
+            const rule = (contentRules || []).find((rule) => queueItem.url.match(rule.url));
             const result = {
                 url: queueItem.url,
                 isHtmlDoc: isHtmlDoc,
@@ -19,10 +17,7 @@ module.exports = (contentRules) => {
                 Object.keys(rule.expected).forEach((locator) => {
                     const expectedPattern = rule.expected[locator];
                     const body = xpath.fromPageSource(responseBody);
-                    const actualValue = tryGetContentByXPath(
-                        body,
-                        locator
-                    ).join(' ');
+                    const actualValue = tryGetContentByXPath(body, locator).join(' ');
                     result.contentCheckerFindings[locator] = {
                         expected: expectedPattern,
                         actual: actualValue,
@@ -40,8 +35,7 @@ module.exports = (contentRules) => {
 
             Object.keys(analysis.contentCheckerFindings).forEach((locator) => {
                 const url = analysis.url;
-                const expected =
-                    analysis.contentCheckerFindings[locator].expected;
+                const expected = analysis.contentCheckerFindings[locator].expected;
                 const actual = analysis.contentCheckerFindings[locator].actual;
 
                 if (!actual.match(expected)) {

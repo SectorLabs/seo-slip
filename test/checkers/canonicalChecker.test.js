@@ -33,12 +33,7 @@ describe('canonicalChecker', function () {
         ['http://www.site.com', 'http://www.site.com', true, []],
         ['https://www.site.com?', 'https://www.site.com', true, []],
         ['https://www.site.com?a=1', 'https://www.site.com', true, []],
-        [
-            'https://www.site.com',
-            'https://www.site.com/',
-            false,
-            [/expected.+actual.+/i],
-        ],
+        ['https://www.site.com', 'https://www.site.com/', false, [/expected.+actual.+/i]],
         [
             'https://www.site.com/en/search/query-string?a=1',
             'https://www.site.com/en/search/query-string',
@@ -69,12 +64,7 @@ describe('canonicalChecker', function () {
             false,
             [/expected.+actual.+/i],
         ],
-        [
-            'https://www.site.com/en/product-1234',
-            'https://www.site.com/en/product-1234',
-            true,
-            [],
-        ],
+        ['https://www.site.com/en/product-1234', 'https://www.site.com/en/product-1234', true, []],
     ].forEach(([url, canonicalUrl, passed, messagePatterns]) => {
         it(`should check the ${canonicalUrl} canonical url of ${url}`, async function () {
             const content =
@@ -99,10 +89,7 @@ describe('canonicalChecker', function () {
 
     it('should fail a response without a canonical link', async function () {
         const url = 'https://www.site.com';
-        const content =
-            `<html><head>` +
-            `<link href="${url}">` +
-            `</head><body></body></html>`;
+        const content = `<html><head>` + `<link href="${url}">` + `</head><body></body></html>`;
 
         const itemData = buildItemData({ url, content });
 
@@ -119,9 +106,7 @@ describe('canonicalChecker', function () {
     it('should ignore a response without a proper html content type header', async function () {
         const url = 'https://www.site.com';
         const content =
-            `<html><head>` +
-            `<link rel="canonical" href="${url}">` +
-            `</head><body></body></html>`;
+            `<html><head>` + `<link rel="canonical" href="${url}">` + `</head><body></body></html>`;
         const headers = { 'content-type': 'text' };
 
         const itemData = buildItemData({ url, content, headers });

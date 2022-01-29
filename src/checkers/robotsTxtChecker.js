@@ -15,10 +15,7 @@ module.exports = (appUrl, robotsTxtRules) => {
         init: () => {
             return downloadRobotsTxt(robotsTxtUrl)
                 .then((robotsTxtContent) => {
-                    robotsTxtParser = robotsParser(
-                        robotsTxtUrl,
-                        robotsTxtContent
-                    );
+                    robotsTxtParser = robotsParser(robotsTxtUrl, robotsTxtContent);
                 })
                 .catch((error) => {
                     console.log(error);
@@ -31,10 +28,7 @@ module.exports = (appUrl, robotsTxtRules) => {
                 url: queueItem.url,
                 path: queueItem.path,
                 contentType: contentType,
-                isAllowedByRobotsTxt: robotsTxtParser.isAllowed(
-                    queueItem.url,
-                    userAgent
-                ),
+                isAllowedByRobotsTxt: robotsTxtParser.isAllowed(queueItem.url, userAgent),
             };
         },
         report: (analysis) => {
@@ -51,9 +45,9 @@ module.exports = (appUrl, robotsTxtRules) => {
             };
 
             if (analysis.url.startsWith(appUrl)) {
-                const notAllowedByRulePattern = (
-                    robotsTxtRules.notAllowed || []
-                ).find((pattern) => analysis.path.match(pattern));
+                const notAllowedByRulePattern = (robotsTxtRules.notAllowed || []).find((pattern) =>
+                    analysis.path.match(pattern)
+                );
                 if (notAllowedByRulePattern && analysis.isAllowedByRobotsTxt) {
                     result.passed = false;
                     result.messages.push(

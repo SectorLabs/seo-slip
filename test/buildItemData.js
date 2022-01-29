@@ -1,11 +1,4 @@
-const buildItemData = ({
-    code,
-    path,
-    url,
-    content,
-    headers,
-    stateData,
-} = {}) => {
+const buildItemData = ({ code, path, url, content, headers, stateData } = {}) => {
     const queueItem = {
         stateData: {
             ...(stateData || {}),

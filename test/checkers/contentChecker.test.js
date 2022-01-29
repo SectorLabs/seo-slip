@@ -28,30 +28,15 @@ describe('contentChecker', function () {
 
     [
         ['https://www.site.com', '<h1>Best site for search</h1>', true, []],
-        [
-            'https://www.site.com',
-            '<h1>Best</h1>' + '<h1>site for search</h1>',
-            true,
-            [],
-        ],
+        ['https://www.site.com', '<h1>Best</h1>' + '<h1>site for search</h1>', true, []],
         [
             'https://www.site.com',
             '<h1>Best site for search in the entire world</h1>',
             false,
             [/locator.+h1.+expected.+actual.+/i],
         ],
-        [
-            'https://www.site.com',
-            '<h1></h1>',
-            false,
-            [/locator.+h1.+expected.+actual.+/i],
-        ],
-        [
-            'https://www.site.com',
-            '',
-            false,
-            [/locator.+h1.+expected.+actual.+/i],
-        ],
+        ['https://www.site.com', '<h1></h1>', false, [/locator.+h1.+expected.+actual.+/i]],
+        ['https://www.site.com', '', false, [/locator.+h1.+expected.+actual.+/i]],
         [
             'https://www.site.com/en/search/query-string/?a=1',
             '<h1>Advanced search page</h1>' +
@@ -61,13 +46,9 @@ describe('contentChecker', function () {
         ],
         [
             'https://www.site.com/en/search/query-string/?a=1',
-            '<h1>Wrong h1</h1>' +
-                '<meta name="description" content="Short description" />',
+            '<h1>Wrong h1</h1>' + '<meta name="description" content="Short description" />',
             false,
-            [
-                /locator.+h1.+expected.+actual.+/i,
-                /locator.+meta.+expected.+actual.+/i,
-            ],
+            [/locator.+h1.+expected.+actual.+/i, /locator.+meta.+expected.+actual.+/i],
         ],
         [
             'https://www.site.com/en/search/query-string/?a=1',
@@ -85,10 +66,7 @@ describe('contentChecker', function () {
             'https://www.site.com/en/search/query-string/?a=1',
             '',
             false,
-            [
-                /locator.+h1.+expected.+actual.+/i,
-                /locator.+meta.+expected.+actual.+/i,
-            ],
+            [/locator.+h1.+expected.+actual.+/i, /locator.+meta.+expected.+actual.+/i],
         ],
         [
             'https://www.site.com/en/search/query-string',

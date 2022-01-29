@@ -18,36 +18,16 @@ describe('robotsTxtChecker', async function () {
         mock('../../src/html/downloadRobotsTxt', mockExport);
 
         const html = mock.reRequire('../../src/html');
-        const robotsTxtChecker = mock.reRequire(
-            '../../src/checkers/robotsTxtChecker'
-        );
+        const robotsTxtChecker = mock.reRequire('../../src/checkers/robotsTxtChecker');
         const checkers = mock.reRequire('../../src/checkers');
 
         return { html, robotsTxtChecker, checkers };
     };
 
     [
-        [
-            '/en/search/query-string',
-            'User-agent: *\nDisallow: /en/\n',
-            false,
-            true,
-            [],
-        ],
-        [
-            '/ar/search/query-string',
-            'User-agent: *\nDisallow: /en/',
-            true,
-            true,
-            [],
-        ],
-        [
-            '/ar/search/query-string/?a=1',
-            'User-agent: *\nDisallow: *?\n',
-            false,
-            true,
-            [],
-        ],
+        ['/en/search/query-string', 'User-agent: *\nDisallow: /en/\n', false, true, []],
+        ['/ar/search/query-string', 'User-agent: *\nDisallow: /en/', true, true, []],
+        ['/ar/search/query-string/?a=1', 'User-agent: *\nDisallow: *?\n', false, true, []],
         [
             '/ar/search/query-string/?a=1',
             'User-agent: *\nAllow: *?\n',
@@ -56,10 +36,7 @@ describe('robotsTxtChecker', async function () {
             [/allowed by robots\.txt.+not allowed by the checker rule/i],
         ],
     ].forEach(([path, robotsTxtContent, allowed, passed, messagePatterns]) => {
-        it(`should check ${path} in ${robotsTxtContent.replace(
-            '\n',
-            ''
-        )}`, async function () {
+        it(`should check ${path} in ${robotsTxtContent.replace('\n', '')}`, async function () {
             const { robotsTxtChecker } = mockDownloadRobotsTxt(() =>
                 Promise.resolve(robotsTxtContent)
             );
