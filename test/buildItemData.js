@@ -11,11 +11,11 @@ const buildItemData = ({
             ...(stateData || {}),
             code: code || 200,
         },
-        url: url || `https://www.domain.com${path}`,
+        url: url || `https://www.site.com${path}`,
         path: path || '',
     };
 
-    const responseBody = content;
+    const responseBody = content || '';
 
     const response = {
         headers: headers || { 'content-type': 'text/html' },

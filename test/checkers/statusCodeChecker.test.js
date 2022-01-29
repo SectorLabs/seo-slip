@@ -52,13 +52,13 @@ describe('statusCodeChecker', function () {
         ],
         [200, '/207or208/path/anything/regexp', true, []],
     ].forEach(([code, path, passed, messagePatterns]) => {
-        it(`should check the ${code} status code of ${path}`, function () {
+        it(`should check the ${code} status code of ${path}`, async function () {
             const itemData = buildItemData({ code, path });
 
             const {
                 report: [itemReport],
                 results: [result],
-            } = run(statusCodeChecker(rules), [itemData]);
+            } = await run(statusCodeChecker(rules), [itemData]);
 
             assert.equal(itemReport.code, code);
             assert.equal(itemReport.path, path);

@@ -4,7 +4,7 @@ const { loggerDummyChecker } = require('../../src/checkers');
 const { buildItemData, run } = require('..');
 
 describe('loggerDummyChecker', function () {
-    it('should log details about the response', function () {
+    it('should log details about the response', async function () {
         const url = 'https://www.site.com/en/search/query-string/?a=1';
         const stateData = {
             requestLatency: 1,
@@ -17,7 +17,7 @@ describe('loggerDummyChecker', function () {
         const {
             report: [itemReport],
             results: [result],
-        } = run(loggerDummyChecker(), [itemData]);
+        } = await run(loggerDummyChecker(), [itemData]);
 
         assert.equal(itemReport.url, url);
         assert.equal(itemReport.__requestLatency, stateData.requestLatency);

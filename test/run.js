@@ -2,10 +2,12 @@ const newEmptyReport = () => ({});
 
 const newEmptyItemResult = () => ({ passed: true, messages: [] });
 
-const run = (checker, itemsData) => {
+const run = async (checker, itemsData) => {
     const analyses = [];
     let report = [];
     let results = [];
+
+    await (checker.init && checker.init());
 
     for (let i = 0; i < itemsData.length; i++) {
         const itemData = itemsData[i];

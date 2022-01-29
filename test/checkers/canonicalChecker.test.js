@@ -76,7 +76,7 @@ describe('canonicalChecker', function () {
             [],
         ],
     ].forEach(([url, canonicalUrl, passed, messagePatterns]) => {
-        it(`should check the ${canonicalUrl} canonical url of ${url}`, function () {
+        it(`should check the ${canonicalUrl} canonical url of ${url}`, async function () {
             const content =
                 `<html><head>` +
                 `<link rel="canonical" href="${canonicalUrl}">` +
@@ -87,7 +87,7 @@ describe('canonicalChecker', function () {
             const {
                 report: [itemReport],
                 results: [result],
-            } = run(canonicalChecker(rules), [itemData]);
+            } = await run(canonicalChecker(rules), [itemData]);
 
             assert.equal(itemReport.canonicalUrl, canonicalUrl);
             assert.equal(result.passed, passed);
@@ -97,7 +97,7 @@ describe('canonicalChecker', function () {
         });
     });
 
-    it('should fail a response without a canonical link', function () {
+    it('should fail a response without a canonical link', async function () {
         const url = 'https://www.site.com';
         const content =
             `<html><head>` +
@@ -109,14 +109,14 @@ describe('canonicalChecker', function () {
         const {
             report: [itemReport],
             results: [result],
-        } = run(canonicalChecker(rules), [itemData]);
+        } = await run(canonicalChecker(rules), [itemData]);
 
         assert.equal(itemReport.canonicalUrl, '');
         assert.equal(result.passed, false);
         assert.match(result.messages[0], /expected.+actual.+/i);
     });
 
-    it('should ignore a response without a proper html content type header', function () {
+    it('should ignore a response without a proper html content type header', async function () {
         const url = 'https://www.site.com';
         const content =
             `<html><head>` +
@@ -129,13 +129,13 @@ describe('canonicalChecker', function () {
         const {
             report: [itemReport],
             results: [result],
-        } = run(canonicalChecker(rules), [itemData]);
+        } = await run(canonicalChecker(rules), [itemData]);
 
         assert.equal(itemReport.canonicalUrl, '');
         assert.equal(result.passed, true);
     });
 
-    it('should ignore a response without a proper content', function () {
+    it('should ignore a response without a proper content', async function () {
         const url = 'https://www.site.com';
         const content = [];
 
@@ -144,7 +144,7 @@ describe('canonicalChecker', function () {
         const {
             report: [itemReport],
             results: [result],
-        } = run(canonicalChecker(rules), [itemData]);
+        } = await run(canonicalChecker(rules), [itemData]);
 
         assert.equal(itemReport.canonicalUrl, '');
         assert.equal(result.passed, true);

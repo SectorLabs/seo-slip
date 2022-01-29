@@ -1,0 +1,82 @@
+const assert = require('assert');
+const mock = require('mock-require');
+
+const { buildItemData, run } = require('..');
+
+describe('robotsTxtChecker', async function () {
+    const appUrl = 'https://www.site.com';
+    const rules = {
+        userAgent: '*',
+        notAllowed: ['^/en/', ['\\?']],
+    };
+
+    afterEach(() => {
+        mock.stopAll();
+    });
+
+    const mockDownloadRobotsTxt = (mockExport) => {
+        mock('../../src/html/downloadRobotsTxt', mockExport);
+
+        const html = mock.reRequire('../../src/html');
+        const robotsTxtChecker = mock.reRequire(
+            '../../src/checkers/robotsTxtChecker'
+        );
+        const checkers = mock.reRequire('../../src/checkers');
+
+        return { html, robotsTxtChecker, checkers };
+    };
+
+    [
+        [
+            '/en/search/query-string',
+            'User-agent: *\nDisallow: /en/\n',
+            false,
+            true,
+            [],
+        ],
+        [
+            '/ar/search/query-string',
+            'User-agent: *\nDisallow: /en/',
+            true,
+            true,
+            [],
+        ],
+        [
+            '/ar/search/query-string/?a=1',
+            'User-agent: *\nDisallow: *?\n',
+            false,
+            true,
+            [],
+        ],
+        [
+            '/ar/search/query-string/?a=1',
+            'User-agent: *\nAllow: *?\n',
+            true,
+            false,
+            [/allowed by robots\.txt.+not allowed by the checker rule/i],
+        ],
+    ].forEach(([path, robotsTxtContent, allowed, passed, messagePatterns]) => {
+        it(`should check ${path} in ${robotsTxtContent.replace(
+            '\n',
+            ''
+        )}`, async function () {
+            const { robotsTxtChecker } = mockDownloadRobotsTxt(() =>
+                Promise.resolve(robotsTxtContent)
+            );
+
+            const itemData = buildItemData({ path });
+
+            const {
+                report: [itemReport],
+                results: [result],
+            } = await run(robotsTxtChecker(appUrl, rules), [itemData]);
+
+            assert.equal(itemReport.isAllowedByRobotsTxt, allowed);
+
+            assert.equal(result.passed, passed);
+            messagePatterns.forEach((messagePattern, index) => {
+                assert.match(result.messages[index], messagePattern);
+            });
+        });
+    });
+});

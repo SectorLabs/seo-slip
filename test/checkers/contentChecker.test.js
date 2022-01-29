@@ -98,14 +98,14 @@ describe('contentChecker', function () {
             [],
         ],
     ].forEach(([url, fragment, passed, messagePatterns]) => {
-        it(`should check the rules for ${url} and ${fragment}`, function () {
+        it(`should check the rules for ${url} and ${fragment}`, async function () {
             const content = `<html>${fragment}</html>`;
 
             const itemData = buildItemData({ url, content });
 
             const {
                 results: [result],
-            } = run(contentChecker(rules), [itemData]);
+            } = await run(contentChecker(rules), [itemData]);
 
             assert.equal(result.passed, passed);
             messagePatterns.forEach((messagePattern, index) => {
@@ -114,7 +114,7 @@ describe('contentChecker', function () {
         });
     });
 
-    it('should ignore a response without a proper html content type header', function () {
+    it('should ignore a response without a proper html content type header', async function () {
         const url = 'https://www.site.com';
         const content = '<html><h1>Best site for search</h1></html>';
         const headers = { 'content-type': 'text' };
@@ -123,12 +123,12 @@ describe('contentChecker', function () {
 
         const {
             results: [result],
-        } = run(contentChecker(rules), [itemData]);
+        } = await run(contentChecker(rules), [itemData]);
 
         assert.equal(result.passed, true);
     });
 
-    it('should ignore a response without a proper content', function () {
+    it('should ignore a response without a proper content', async function () {
         const url = 'https://www.site.com';
         const content = [];
 
@@ -136,7 +136,7 @@ describe('contentChecker', function () {
 
         const {
             results: [result],
-        } = run(contentChecker(rules), [itemData]);
+        } = await run(contentChecker(rules), [itemData]);
 
         assert.equal(result.passed, true);
     });

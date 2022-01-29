@@ -1,6 +1,6 @@
 const robotsParser = require('robots-parser');
 
-const { downloadRobotsTxt, isHtmlDocument } = require('../html');
+const { downloadRobotsTxt } = require('../html');
 
 module.exports = (appUrl, robotsTxtRules) => {
     const userAgent = (robotsTxtRules || {}).userAgent || '*';
@@ -26,20 +26,22 @@ module.exports = (appUrl, robotsTxtRules) => {
                 });
         },
         analysis: (queueItem, responseBody, response) => {
-            const contentType = queueItem.stateData.headers['content-type'];
+            const contentType = response.headers['content-type'];
             return {
+                url: queueItem.url,
                 path: queueItem.path,
                 contentType: contentType,
-                robotsTxtIsAllowed: isHtmlDocument(responseBody, response)
-                    ? robotsTxtParser.isAllowed(queueItem.url, userAgent)
-                    : undefined,
+                isAllowedByRobotsTxt: robotsTxtParser.isAllowed(
+                    queueItem.url,
+                    userAgent
+                ),
             };
         },
         report: (analysis) => {
             return {
                 path: analysis.path,
                 contentType: analysis.contentType,
-                robotsTxtIsAllowed: analysis.robotsTxtIsAllowed,
+                isAllowedByRobotsTxt: analysis.isAllowedByRobotsTxt,
             };
         },
         check: (analysis) => {
@@ -49,17 +51,13 @@ module.exports = (appUrl, robotsTxtRules) => {
             };
 
             if (analysis.url.startsWith(appUrl)) {
-                const notAllowedPattern = (
+                const notAllowedByRulePattern = (
                     robotsTxtRules.notAllowed || []
                 ).find((pattern) => analysis.path.match(pattern));
-                if (
-                    analysis.robotsTxtIsAllowed !== undefined &&
-                    !analysis.robotsTxtIsAllowed &&
-                    !notAllowedPattern
-                ) {
+                if (notAllowedByRulePattern && analysis.isAllowedByRobotsTxt) {
                     result.passed = false;
                     result.messages.push(
-                        `Crawl is not allowed and url not in notAllowed exception list, url=${analysis.url}`
+                        `Crawling is allowed by robots.txt, but not allowed by the checker rule ${notAllowedByRulePattern}, url=${analysis.url}`
                     );
                 }
             }

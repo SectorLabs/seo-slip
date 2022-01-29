@@ -11,11 +11,11 @@ describe('maxPageCountChecker', function () {
         [11, 10, false, [/limit.+10.+exceeded/i]],
         [100, 10, false, [/limit.+10.+exceeded/i]],
     ].forEach(([itemCount, maxPageCount, passed, messagePatterns]) => {
-        it(`should check when itemCount=${itemCount} and maxPageCount=${maxPageCount}`, function () {
+        it(`should check when itemCount=${itemCount} and maxPageCount=${maxPageCount}`, async function () {
             const itemData = buildItemData();
             const itemsData = Array(itemCount).fill(itemData);
 
-            const { results, finalResult } = run(
+            const { results, finalResult } = await run(
                 maxPageCountChecker(maxPageCount),
                 itemsData
             );
