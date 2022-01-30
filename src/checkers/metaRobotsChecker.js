@@ -25,12 +25,11 @@ module.exports = (metaRobotsRules) => {
             const isHtmlDoc = isHtmlDocument(responseBody, response);
             return isHtmlDoc
                 ? {
-                      ...toBooleanRobotsDirective(
-                          getRobotsContent(responseBody)
-                      ),
+                      ...toBooleanRobotsDirective(getRobotsContent(responseBody)),
+                      url: queueItem.url,
                       isHtmlDocument: isHtmlDoc,
                   }
-                : {};
+                : { isHtmlDocument: isHtmlDoc };
         },
         report: (analysis) => {
             if (analysis.isHtmlDocument) {
@@ -42,9 +41,9 @@ module.exports = (metaRobotsRules) => {
             return {};
         },
         check: (analysis) => {
-            const rule = (metaRobotsRules || []).find((rule) =>
-                analysis.url.match(rule.path)
-            );
+            const rule = analysis.isHtmlDocument
+                ? (metaRobotsRules || []).find((rule) => analysis.url.match(rule.path))
+                : null;
             let result = {
                 passed: true,
                 messages: [],
@@ -56,10 +55,7 @@ module.exports = (metaRobotsRules) => {
                         `Expected index=${rule.index}, actual=${analysis.index}, url=${analysis.url}`
                     );
                 }
-                if (
-                    rule.follow !== undefined &&
-                    rule.follow !== analysis.follow
-                ) {
+                if (rule.follow !== undefined && rule.follow !== analysis.follow) {
                     result.passed = false;
                     result.messages.push(
                         `Expected follow=${rule.follow}, actual=${analysis.follow}, url=${analysis.url}`

@@ -1,0 +1,19 @@
+version: 2.1
+orbs:
+  node: circleci/node@1.1.6
+jobs:
+  complete-check-job:
+    executor:
+      name: node/default
+    resource_class: small
+    steps:
+      - checkout
+      - node/with-cache:
+          steps:
+            - run: npm install
+            - run: npm run test
+            - run: npm run test:format
+workflows:
+    complete-check-workflow:
+      jobs:
+        - complete-check-job

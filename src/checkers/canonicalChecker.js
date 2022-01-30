@@ -40,10 +40,7 @@ module.exports = (canonicalRules) => {
                 const match = analysis.url.match(canonicalRule.url);
                 let expectedUrl = canonicalRule.expected;
                 for (let i = 1; i < match.length; i++) {
-                    expectedUrl = expectedUrl.replace(
-                        `(\$${i})`,
-                        match[i] || ''
-                    );
+                    expectedUrl = expectedUrl.replace(`(\$${i})`, match[i] || '');
                 }
 
                 if (analysis.canonicalUrl !== expectedUrl) {

@@ -30,8 +30,7 @@ const attributeHandler = (body, locator) => {
 
 const tryGetContentByXPath = (body, locator) => {
     try {
-        const content =
-            textHandler(body, locator) || attributeHandler(body, locator) || [];
+        const content = textHandler(body, locator) || attributeHandler(body, locator) || [];
         return content;
     } catch (e) {
         console.log(e);

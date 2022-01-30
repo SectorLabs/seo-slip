@@ -8,8 +8,6 @@ module.exports = (fullFileName, header, report) => {
 
     const headerContent = header.join(',');
 
-    const content = report
-        .map((item) => header.map((column) => item[column]).join(','))
-        .join('\n');
+    const content = report.map((item) => header.map((column) => item[column]).join(',')).join('\n');
     fs.writeFileSync(fullFileName, headerContent + '\n' + content);
 };

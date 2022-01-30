@@ -39,9 +39,7 @@ module.exports = (fullPath, maxDepth, variables, checkers, done) => {
         checkers.forEach((checker) => {
             analyse = Object.assign(
                 analyse,
-                checker.analysis
-                    ? checker.analysis(queueItem, responseBody, response)
-                    : {}
+                checker.analysis ? checker.analysis(queueItem, responseBody, response) : {}
             );
         });
 
@@ -52,10 +50,7 @@ module.exports = (fullPath, maxDepth, variables, checkers, done) => {
         let itemReport = {};
 
         checkers.forEach((checker) => {
-            itemReport = Object.assign(
-                itemReport,
-                checker.report ? checker.report(analysis) : {}
-            );
+            itemReport = Object.assign(itemReport, checker.report ? checker.report(analysis) : {});
         });
 
         return itemReport;

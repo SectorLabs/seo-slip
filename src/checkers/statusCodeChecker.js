@@ -1,8 +1,7 @@
 module.exports = (statusCodeRules) => {
     const code = (statusCodeRules || {}).code || 200;
 
-    const escapeRegExp = (string) =>
-        string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
     const normalizeCode = (code) => (typeof code === 'number' ? [code] : code);
 
@@ -27,9 +26,7 @@ module.exports = (statusCodeRules) => {
         });
     };
 
-    const exceptions = normalizeExceptions(
-        (statusCodeRules || {}).exceptions || {}
-    );
+    const exceptions = normalizeExceptions((statusCodeRules || {}).exceptions || {});
 
     const findException = (path, exceptions) => {
         return exceptions.find((exception) => path.match(exception.regexp));
@@ -40,6 +37,7 @@ module.exports = (statusCodeRules) => {
             return {
                 code: queueItem.stateData.code,
                 path: queueItem.path,
+                url: queueItem.url,
                 referrer: queueItem.referrer,
             };
         },

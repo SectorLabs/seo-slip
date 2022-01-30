@@ -1,6 +1,5 @@
 module.exports = (snapshotRules, previousReport) => {
-    const missingUrlCountThreshold =
-        (snapshotRules || {}).missingUrlCountThreshold || 0.3;
+    const missingUrlCountThreshold = (snapshotRules || {}).missingUrlCountThreshold || 0.3;
     const ignoreColumns = (snapshotRules || {}).ignoreColumns || [];
 
     const previousReportMap = previousReport.reduce((acc, itemReport) => {
@@ -9,7 +8,7 @@ module.exports = (snapshotRules, previousReport) => {
     }, {});
 
     return {
-        finalCheck: (analysis, report) => {
+        finalCheck: (analyses, report) => {
             let result = {
                 passed: true,
                 messages: [],
@@ -30,8 +29,7 @@ module.exports = (snapshotRules, previousReport) => {
                     Object.keys(previousReportItem).forEach((key) => {
                         const previousValue = previousReportItem[key];
                         const value = reportItem[key];
-                        const serializedValue =
-                            value === undefined ? '' : value.toString();
+                        const serializedValue = value === undefined ? '' : value.toString();
                         if (
                             previousValue !== serializedValue &&
                             ignoreColumns.indexOf(key) === -1 &&

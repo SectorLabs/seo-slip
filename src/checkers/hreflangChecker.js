@@ -11,13 +11,9 @@ module.exports = (hreflangRules) => {
             if (hreflangElements) {
                 return hreflangElements.reduce((hreflangElemsMap, elem) => {
                     const hrefAttribute = elem.attributes.getNamedItem('href');
-                    const hreflangAttribute = elem.attributes.getNamedItem(
-                        'hreflang'
-                    );
+                    const hreflangAttribute = elem.attributes.getNamedItem('hreflang');
                     if (hrefAttribute && hreflangAttribute) {
-                        const hreflang = noMemoryLeakStrCopy(
-                            hreflangAttribute.value
-                        );
+                        const hreflang = noMemoryLeakStrCopy(hreflangAttribute.value);
                         const href = noMemoryLeakStrCopy(hrefAttribute.value);
                         hreflangElemsMap[hreflang] = href;
                     }
@@ -44,8 +40,7 @@ module.exports = (hreflangRules) => {
             Object.keys(analysis.hreflangUrls)
                 .sort()
                 .forEach((hreflang) => {
-                    report[`hreflang=${hreflang}`] =
-                        analysis.hreflangUrls[hreflang];
+                    report[`hreflang=${hreflang}`] = analysis.hreflangUrls[hreflang];
                 });
             return report;
         },
@@ -65,10 +60,7 @@ module.exports = (hreflangRules) => {
                 Object.keys(hreflangRule.expected).forEach((hreflang) => {
                     let expectedUrl = hreflangRule.expected[hreflang];
                     for (let i = 1; i < match.length; i++) {
-                        expectedUrl = expectedUrl.replace(
-                            `(\$${i})`,
-                            match[i] || ''
-                        );
+                        expectedUrl = expectedUrl.replace(`(\$${i})`, match[i] || '');
                     }
 
                     if (analysis.hreflangUrls[hreflang] !== expectedUrl) {
