@@ -12,7 +12,7 @@ jobs:
           steps:
             - run: npm install
             - run: npm run test
-            - run: npm run format
+            - run: npm run test:format
 workflows:
     complete-check-workflow:
       jobs:
