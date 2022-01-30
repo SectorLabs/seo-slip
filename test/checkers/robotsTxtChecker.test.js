@@ -3,7 +3,7 @@ const mock = require('mock-require');
 
 const { buildItemData, run } = require('..');
 
-describe('robotsTxtChecker', async function () {
+describe('robotsTxtChecker', async () => {
     const appUrl = 'https://www.site.com';
     const rules = {
         userAgent: '*',
@@ -36,7 +36,7 @@ describe('robotsTxtChecker', async function () {
             [/allowed by robots\.txt.+not allowed by the checker rule/i],
         ],
     ].forEach(([path, robotsTxtContent, allowed, passed, messagePatterns]) => {
-        it(`should check ${path} in ${robotsTxtContent.replace('\n', '')}`, async function () {
+        it(`should check ${path} in ${robotsTxtContent.replace('\n', '')}`, async () => {
             const { robotsTxtChecker } = mockDownloadRobotsTxt(() =>
                 Promise.resolve(robotsTxtContent)
             );

@@ -3,7 +3,7 @@ const { contentChecker } = require('../../src/checkers');
 
 const { buildItemData, run } = require('..');
 
-describe('contentChecker', function () {
+describe('contentChecker', () => {
     const rules = [
         {
             url: /^(.+site\.com)(\/)?(\?.*)?$/,
@@ -76,7 +76,7 @@ describe('contentChecker', function () {
             [],
         ],
     ].forEach(([url, fragment, passed, messagePatterns]) => {
-        it(`should check the rules for ${url} and ${fragment}`, async function () {
+        it(`should check the rules for ${url} and ${fragment}`, async () => {
             const content = `<html>${fragment}</html>`;
 
             const itemData = buildItemData({ url, content });
@@ -92,7 +92,7 @@ describe('contentChecker', function () {
         });
     });
 
-    it('should ignore a response without a proper html content type header', async function () {
+    it('should ignore a response without a proper html content type header', async () => {
         const url = 'https://www.site.com';
         const content = '<html><h1>Best site for search</h1></html>';
         const headers = { 'content-type': 'text' };
@@ -106,7 +106,7 @@ describe('contentChecker', function () {
         assert.equal(result.passed, true);
     });
 
-    it('should ignore a response without a proper content', async function () {
+    it('should ignore a response without a proper content', async () => {
         const url = 'https://www.site.com';
         const content = [];
 

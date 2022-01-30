@@ -3,8 +3,8 @@ const { loggerDummyChecker } = require('../../src/checkers');
 
 const { buildItemData, run } = require('..');
 
-describe('loggerDummyChecker', function () {
-    it('should log details about the response', async function () {
+describe('loggerDummyChecker', () => {
+    it('should log details about the response', async () => {
         const url = 'https://www.site.com/en/search/query-string/?a=1';
         const stateData = {
             requestLatency: 1,

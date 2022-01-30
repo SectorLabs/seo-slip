@@ -1,8 +1,8 @@
 const assert = require('assert');
 const { snapshotChecker } = require('../../src/checkers');
 
-describe('snapshotChecker', function () {
-    it('should pass when the previous and current reports are empty', function () {
+describe('snapshotChecker', () => {
+    it('should pass when the previous and current reports are empty', () => {
         const rules = {};
         const previousReport = [];
         const currentReport = [];
@@ -12,7 +12,7 @@ describe('snapshotChecker', function () {
         assert.equal(result.passed, true);
     });
 
-    it('should pass when the previous report is empty', function () {
+    it('should pass when the previous report is empty', () => {
         const rules = {};
         const previousReport = [];
         const currentReport = [
@@ -26,7 +26,7 @@ describe('snapshotChecker', function () {
         assert.equal(result.passed, true);
     });
 
-    it('should pass when the previous and current reports are identical', function () {
+    it('should pass when the previous and current reports are identical', () => {
         const rules = {};
         const previousReport = [
             { url: 'https://a.b/c', index: 'true', follow: 'true' },
@@ -40,7 +40,7 @@ describe('snapshotChecker', function () {
         assert.equal(result.passed, true);
     });
 
-    it('should pass when a new url is added to the current report', function () {
+    it('should pass when a new url is added to the current report', () => {
         const rules = {};
         const previousReport = [
             { url: 'https://a.b/c', index: 'true', follow: 'true' },
@@ -57,7 +57,7 @@ describe('snapshotChecker', function () {
         assert.equal(result.passed, true);
     });
 
-    it('should fail when the reports are different', function () {
+    it('should fail when the reports are different', () => {
         const rules = {};
         const previousReport = [
             { url: 'https://a.b/c', index: 'true', follow: 'true' },
@@ -76,7 +76,7 @@ describe('snapshotChecker', function () {
         assert.match(result.messages[0], /previous.+follow.+true.+now.+false/i);
     });
 
-    it('should pass when a different column is specified in the ignore list', function () {
+    it('should pass when a different column is specified in the ignore list', () => {
         const rules = { ignoreColumns: ['follow'] };
         const previousReport = [
             { url: 'https://a.b/c', index: 'true', follow: 'true' },
@@ -94,7 +94,7 @@ describe('snapshotChecker', function () {
         assert.equal(result.passed, true);
     });
 
-    it('should pass when a different column is named with __ prefix', function () {
+    it('should pass when a different column is named with __ prefix', () => {
         const rules = {};
         const previousReport = [
             { url: 'https://a.b/c', index: 'true', __follow: 'true' },
@@ -119,7 +119,7 @@ describe('snapshotChecker', function () {
         [0.32, false, [/missing.+count.+1.+percentage.+0.33333/i]],
         [0.0, false, [/missing.+count.+1.+percentage.+0.33333/i]],
     ].forEach(([missingUrlCountThreshold, passed, messagePatterns]) => {
-        it('should check when the current report is missing previous urls', function () {
+        it('should check when the current report is missing previous urls', () => {
             const rules = { missingUrlCountThreshold };
             const previousReport = [
                 { url: 'https://a.b/c', index: 'true', follow: 'true' },

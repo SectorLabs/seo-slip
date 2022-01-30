@@ -3,7 +3,7 @@ const { canonicalChecker } = require('../../src/checkers');
 
 const { buildItemData, run } = require('..');
 
-describe('canonicalChecker', function () {
+describe('canonicalChecker', () => {
     const rules = [
         {
             url: /^(.+site\.com)(\/)?(\?.*)?$/,
@@ -66,7 +66,7 @@ describe('canonicalChecker', function () {
         ],
         ['https://www.site.com/en/product-1234', 'https://www.site.com/en/product-1234', true, []],
     ].forEach(([url, canonicalUrl, passed, messagePatterns]) => {
-        it(`should check the ${canonicalUrl} canonical url of ${url}`, async function () {
+        it(`should check the ${canonicalUrl} canonical url of ${url}`, async () => {
             const content =
                 `<html><head>` +
                 `<link rel="canonical" href="${canonicalUrl}">` +
@@ -87,7 +87,7 @@ describe('canonicalChecker', function () {
         });
     });
 
-    it('should fail a response without a canonical link', async function () {
+    it('should fail a response without a canonical link', async () => {
         const url = 'https://www.site.com';
         const content = `<html><head>` + `<link href="${url}">` + `</head><body></body></html>`;
 
@@ -103,7 +103,7 @@ describe('canonicalChecker', function () {
         assert.match(result.messages[0], /expected.+actual.+/i);
     });
 
-    it('should ignore a response without a proper html content type header', async function () {
+    it('should ignore a response without a proper html content type header', async () => {
         const url = 'https://www.site.com';
         const content =
             `<html><head>` + `<link rel="canonical" href="${url}">` + `</head><body></body></html>`;
@@ -120,7 +120,7 @@ describe('canonicalChecker', function () {
         assert.equal(result.passed, true);
     });
 
-    it('should ignore a response without a proper content', async function () {
+    it('should ignore a response without a proper content', async () => {
         const url = 'https://www.site.com';
         const content = [];
 

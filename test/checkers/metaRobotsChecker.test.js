@@ -3,7 +3,7 @@ const { metaRobotsChecker } = require('../../src/checkers');
 
 const { buildItemData, run } = require('..');
 
-describe('metaRobotsChecker', function () {
+describe('metaRobotsChecker', () => {
     const rules = [
         {
             path: /^(.+site\.com)(\/)?(\?.*)?$/,
@@ -54,7 +54,7 @@ describe('metaRobotsChecker', function () {
             [/expected.+index.+false.+actual.+true/i, /expected.+follow.+true.+actual.+false/i],
         ],
     ].forEach(([url, fragment, passed, messagePatterns]) => {
-        it(`should check the rules for ${url} and ${fragment}`, async function () {
+        it(`should check the rules for ${url} and ${fragment}`, async () => {
             const content = `<html>${fragment}</html>`;
 
             const itemData = buildItemData({ url, content });
@@ -70,7 +70,7 @@ describe('metaRobotsChecker', function () {
         });
     });
 
-    it('should ignore a response without a proper html content type header', async function () {
+    it('should ignore a response without a proper html content type header', async () => {
         const url = 'https://www.site.com';
         const content = '<meta name="robots" content="noindex,nofollow" />';
         const headers = { 'content-type': 'text' };
@@ -84,7 +84,7 @@ describe('metaRobotsChecker', function () {
         assert.equal(result.passed, true);
     });
 
-    it('should ignore a response without a proper content', async function () {
+    it('should ignore a response without a proper content', async () => {
         const url = 'https://www.site.com';
         const content = [];
 

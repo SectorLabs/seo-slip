@@ -3,7 +3,7 @@ const { statusCodeChecker } = require('../../src/checkers');
 
 const { buildItemData, run } = require('..');
 
-describe('statusCodeChecker', function () {
+describe('statusCodeChecker', () => {
     const rules = {
         code: 200,
         exceptions: {
@@ -37,7 +37,7 @@ describe('statusCodeChecker', function () {
         [209, '/207or208/path/anything/regexp', false, [/expected.+207,208.+actual.+209/i]],
         [200, '/207or208/path/anything/regexp', true, []],
     ].forEach(([code, path, passed, messagePatterns]) => {
-        it(`should check the ${code} status code of ${path}`, async function () {
+        it(`should check the ${code} status code of ${path}`, async () => {
             const itemData = buildItemData({ code, path });
 
             const {
