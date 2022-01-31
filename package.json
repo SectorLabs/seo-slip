@@ -1,6 +1,6 @@
 {
     "name": "@sector-labs/seo-slip",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Catches SEO regressions by sampling and checking a website against a set of rules",
     "main": "index.js",
     "scripts": {
@@ -38,13 +38,13 @@
     ],
     "dependencies": {
         "csv-parse": "^4.15.3",
-        "node-fetch": "^2.6.1",
+        "node-fetch": "^2.6.7",
         "robots-parser": "^2.3.0",
         "simplecrawler": "^1.1.9",
         "xpath-html": "^1.0.2"
     },
     "devDependencies": {
-        "mocha": "^9.1.4",
+        "mocha": "^9.2.0",
         "mock-require": "^3.0.3",
         "prettier": "2.2.1"
     }
