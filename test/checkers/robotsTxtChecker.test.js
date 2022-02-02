@@ -56,4 +56,23 @@ describe('robotsTxtChecker', async () => {
             });
         });
     });
+
+    it('should pass when the response is undefined', async () => {
+        const path = '/en/search/query-string';
+        const robotsTxtContent = 'User-agent: *\nDisallow: /en/\n';
+        const allowed = false;
+        const { robotsTxtChecker } = mockDownloadRobotsTxt(() => Promise.resolve(robotsTxtContent));
+
+        const itemData = buildItemData({ path });
+        itemData.response = undefined;
+
+        const {
+            report: [itemReport],
+            results: [result],
+        } = await run(robotsTxtChecker(appUrl, rules), [itemData]);
+
+        assert.equal(itemReport.isAllowedByRobotsTxt, allowed);
+
+        assert.equal(result.passed, true);
+    });
 });
