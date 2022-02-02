@@ -23,7 +23,7 @@ module.exports = (appUrl, robotsTxtRules) => {
                 });
         },
         analysis: (queueItem, responseBody, response) => {
-            const contentType = response.headers['content-type'];
+            const contentType = response && response.headers['content-type'];
             return {
                 url: queueItem.url,
                 path: queueItem.path,
