@@ -1,7 +1,7 @@
 const https = require('https');
 
-const downloadRobotsTxt = (robotsTxtUrl) => {
-    const options = { headers: { 'User-Agent': 'curl/7.64.1' } };
+const downloadRobotsTxt = (robotsTxtUrl, customHeaders = {}) => {
+    const options = { headers: { 'User-Agent': 'curl/7.64.1', ...customHeaders } };
     return new Promise((resolve, reject) => {
         https
             .get(robotsTxtUrl, options, (res) => {

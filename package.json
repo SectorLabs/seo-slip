@@ -46,6 +46,7 @@
     "devDependencies": {
         "mocha": "^9.2.0",
         "mock-require": "^3.0.3",
-        "prettier": "2.2.1"
+        "prettier": "2.2.1",
+        "sinon": "^13.0.1"
     }
 }

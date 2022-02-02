@@ -1,5 +1,6 @@
 const assert = require('assert');
 const mock = require('mock-require');
+const sinon = require('sinon');
 
 const { buildItemData, run } = require('..');
 
@@ -46,7 +47,7 @@ describe('robotsTxtChecker', async () => {
             const {
                 report: [itemReport],
                 results: [result],
-            } = await run(robotsTxtChecker(appUrl, rules), [itemData]);
+            } = await run(robotsTxtChecker(rules, appUrl), [itemData]);
 
             assert.equal(itemReport.isAllowedByRobotsTxt, allowed);
 
@@ -64,12 +65,37 @@ describe('robotsTxtChecker', async () => {
         const { robotsTxtChecker } = mockDownloadRobotsTxt(() => Promise.resolve(robotsTxtContent));
 
         const itemData = buildItemData({ path });
+
+        const {
+            report: [itemReport],
+            results: [result],
+        } = await run(robotsTxtChecker(rules, appUrl), [itemData]);
+
+        assert.equal(itemReport.isAllowedByRobotsTxt, allowed);
+
+        assert.equal(result.passed, true);
+    });
+
+    it('should use the custom headers when specified', async () => {
+        const path = '/en/search/query-string';
+        const robotsTxtContent = 'User-agent: *\nDisallow: /en/\n';
+        const allowed = false;
+        const customHeaders = { x: -1 };
+        const fakeDownloadRobotsTxt = sinon.fake.returns(Promise.resolve(robotsTxtContent));
+        const { robotsTxtChecker } = mockDownloadRobotsTxt(fakeDownloadRobotsTxt);
+
+        const itemData = buildItemData({ path });
         itemData.response = undefined;
 
         const {
             report: [itemReport],
             results: [result],
-        } = await run(robotsTxtChecker(appUrl, rules), [itemData]);
+        } = await run(robotsTxtChecker(rules, appUrl, customHeaders), [itemData]);
+
+        assert.equal(
+            fakeDownloadRobotsTxt.calledWith('https://www.site.com/robots.txt', customHeaders),
+            true
+        );
 
         assert.equal(itemReport.isAllowedByRobotsTxt, allowed);
 
