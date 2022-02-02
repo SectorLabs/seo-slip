@@ -2,7 +2,7 @@ const robotsParser = require('robots-parser');
 
 const { downloadRobotsTxt } = require('../html');
 
-module.exports = (appUrl, robotsTxtRules) => {
+module.exports = (robotsTxtRules, appUrl, customHeaders) => {
     const userAgent = (robotsTxtRules || {}).userAgent || '*';
     const robotsTxtUrl = `${appUrl}/robots.txt`;
     let robotsTxtParser = null;
@@ -13,7 +13,7 @@ module.exports = (appUrl, robotsTxtRules) => {
 
     return {
         init: () => {
-            return downloadRobotsTxt(robotsTxtUrl)
+            return downloadRobotsTxt(robotsTxtUrl, customHeaders)
                 .then((robotsTxtContent) => {
                     robotsTxtParser = robotsParser(robotsTxtUrl, robotsTxtContent);
                 })
