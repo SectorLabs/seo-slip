@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { canonicalChecker } = require('../../src/checkers');
 
-const { buildItemData, run } = require('..');
+const { assertMessages, assertPassed, buildItemData, run } = require('..');
 
 describe('canonicalChecker', () => {
     const rules = [
@@ -76,14 +76,12 @@ describe('canonicalChecker', () => {
 
             const {
                 report: [itemReport],
-                results: [result],
-            } = await run(canonicalChecker(rules), [itemData]);
+                results,
+            } = await run([canonicalChecker(rules)], [itemData]);
 
             assert.equal(itemReport.canonicalUrl, canonicalUrl);
-            assert.equal(result.passed, passed);
-            messagePatterns.forEach((messagePattern, index) => {
-                assert.match(result.messages[index], messagePattern);
-            });
+            assertPassed(results, passed);
+            assertMessages(results, messagePatterns);
         });
     });
 
@@ -95,12 +93,12 @@ describe('canonicalChecker', () => {
 
         const {
             report: [itemReport],
-            results: [result],
-        } = await run(canonicalChecker(rules), [itemData]);
+            results,
+        } = await run([canonicalChecker(rules)], [itemData]);
 
         assert.equal(itemReport.canonicalUrl, '');
-        assert.equal(result.passed, false);
-        assert.match(result.messages[0], /expected.+actual.+/i);
+        assertPassed(results, false);
+        assertMessages(results, [/expected.+actual.+/i]);
     });
 
     it('should ignore a response without a proper html content type header', async () => {
@@ -113,11 +111,11 @@ describe('canonicalChecker', () => {
 
         const {
             report: [itemReport],
-            results: [result],
-        } = await run(canonicalChecker(rules), [itemData]);
+            results,
+        } = await run([canonicalChecker(rules)], [itemData]);
 
         assert.equal(itemReport.canonicalUrl, '');
-        assert.equal(result.passed, true);
+        assertPassed(results, true);
     });
 
     it('should ignore a response without a proper content', async () => {
@@ -128,10 +126,10 @@ describe('canonicalChecker', () => {
 
         const {
             report: [itemReport],
-            results: [result],
-        } = await run(canonicalChecker(rules), [itemData]);
+            results,
+        } = await run([canonicalChecker(rules)], [itemData]);
 
         assert.equal(itemReport.canonicalUrl, '');
-        assert.equal(result.passed, true);
+        assertPassed(results, true);
     });
 });

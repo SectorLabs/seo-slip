@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { loggerDummyChecker } = require('../../src/checkers');
 
-const { buildItemData, run } = require('..');
+const { assertPassed, buildItemData, run } = require('..');
 
 describe('loggerDummyChecker', () => {
     it('should log details about the response', async () => {
@@ -16,8 +16,8 @@ describe('loggerDummyChecker', () => {
 
         const {
             report: [itemReport],
-            results: [result],
-        } = await run(loggerDummyChecker(), [itemData]);
+            results,
+        } = await run([loggerDummyChecker()], [itemData]);
 
         assert.equal(itemReport.url, url);
         assert.equal(itemReport.__requestLatency, stateData.requestLatency);
@@ -25,6 +25,6 @@ describe('loggerDummyChecker', () => {
         assert.equal(itemReport.__requestTime, stateData.requestTime);
         assert.equal(itemReport.__actualDataSize, stateData.actualDataSize);
 
-        assert.equal(result.passed, true);
+        assertPassed(results, true);
     });
 });

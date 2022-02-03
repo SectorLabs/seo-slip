@@ -36,7 +36,7 @@ const run = async (checkers, itemsData) => {
     for (let i = 0; i < checkers.length; i++) {
         const checker = checkers[i];
         if (checker.init) {
-            (await checker.init) && checker.init();
+            await checker.init();
         }
     }
 

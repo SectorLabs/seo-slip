@@ -1,10 +1,10 @@
 const assert = require('assert');
 const { canonicalChecker, statusCodeChecker } = require('../../src/checkers');
 
-const { buildItemData, run, assertMessages } = require('..');
+const { assertMessages, buildItemData, run } = require('..');
 
 describe('canonicalChecker', () => {
-    it.only('should properly report the messages', async () => {
+    it('should properly report the messages', async () => {
         const url = 'https://www.site.com/';
         const path = '/';
         const canonicalUrl = 'https://www.site.com/?a=1';

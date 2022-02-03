@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { hreflangChecker } = require('../../src/checkers');
 
-const { buildItemData, run } = require('..');
+const { assertMessages, assertPassed, buildItemData, run } = require('..');
 
 describe('hreflangChecker', () => {
     const rules = [
@@ -98,14 +98,10 @@ describe('hreflangChecker', () => {
 
             const itemData = buildItemData({ url, content });
 
-            const {
-                results: [result],
-            } = await run(hreflangChecker(rules), [itemData]);
+            const { results } = await run([hreflangChecker(rules)], [itemData]);
 
-            assert.equal(result.passed, passed);
-            messagePatterns.forEach((messagePattern, index) => {
-                assert.match(result.messages[index], messagePattern);
-            });
+            assertPassed(results, passed);
+            assertMessages(results, messagePatterns);
         });
     });
 
@@ -116,11 +112,9 @@ describe('hreflangChecker', () => {
 
         const itemData = buildItemData({ url, content, headers });
 
-        const {
-            results: [result],
-        } = await run(hreflangChecker(rules), [itemData]);
+        const { results } = await run([hreflangChecker(rules)], [itemData]);
 
-        assert.equal(result.passed, true);
+        assertPassed(results, true);
     });
 
     it('should ignore a response without a proper content', async () => {
@@ -129,10 +123,8 @@ describe('hreflangChecker', () => {
 
         const itemData = buildItemData({ url, content });
 
-        const {
-            results: [result],
-        } = await run(hreflangChecker(rules), [itemData]);
+        const { results } = await run([hreflangChecker(rules)], [itemData]);
 
-        assert.equal(result.passed, true);
+        assertPassed(results, true);
     });
 });
