@@ -1,10 +1,14 @@
 const assert = require('assert');
 
 const assertMessages = (results, messagePatterns) => {
+    const messages = [].concat.apply(
+        [],
+        results.messages.map((message) => message.text)
+    );
     messagePatterns.forEach((messagePattern, index) => {
-        assert.match(results.messages[index], messagePattern);
+        assert.match(messages[index], messagePattern);
     });
-    assert.equal(results.messages.length, messagePatterns.length);
+    assert.equal(messages.length, messagePatterns.length);
 };
 
 module.exports = assertMessages;

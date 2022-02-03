@@ -1,15 +1,17 @@
 const assert = require('assert');
 const { snapshotChecker } = require('../../src/checkers');
 
+const { assertMessages, assertPassed } = require('..');
+
 describe('snapshotChecker', () => {
     it('should pass when the previous and current reports are empty', () => {
         const rules = {};
         const previousReport = [];
         const currentReport = [];
 
-        const result = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
+        const results = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
 
-        assert.equal(result.passed, true);
+        assertPassed(results, true);
     });
 
     it('should pass when the previous report is empty', () => {
@@ -21,9 +23,9 @@ describe('snapshotChecker', () => {
             { url: 'https://a.b/e', index: 'false', follow: 'true' },
         ];
 
-        const result = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
+        const results = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
 
-        assert.equal(result.passed, true);
+        assertPassed(results, true);
     });
 
     it('should pass when the previous and current reports are identical', () => {
@@ -35,9 +37,9 @@ describe('snapshotChecker', () => {
         ];
         const currentReport = previousReport;
 
-        const result = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
+        const results = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
 
-        assert.equal(result.passed, true);
+        assertPassed(results, true);
     });
 
     it('should pass when a new url is added to the current report', () => {
@@ -52,9 +54,9 @@ describe('snapshotChecker', () => {
             { url: 'https://a.b/e', index: 'false', follow: 'true' },
         ];
 
-        const result = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
+        const results = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
 
-        assert.equal(result.passed, true);
+        assertPassed(results, true);
     });
 
     it('should fail when the reports are different', () => {
@@ -70,10 +72,10 @@ describe('snapshotChecker', () => {
             { url: 'https://a.b/e', index: 'false', follow: 'false' },
         ];
 
-        const result = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
+        const results = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
 
-        assert.equal(result.passed, false);
-        assert.match(result.messages[0], /previous.+follow.+true.+now.+false/i);
+        assertPassed(results, false);
+        assertMessages(results, [/previous.+follow.+true.+now.+false/i]);
     });
 
     it('should pass when a different column is specified in the ignore list', () => {
@@ -89,9 +91,9 @@ describe('snapshotChecker', () => {
             { url: 'https://a.b/e', index: 'false', follow: 'false' },
         ];
 
-        const result = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
+        const results = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
 
-        assert.equal(result.passed, true);
+        assertPassed(results, true);
     });
 
     it('should pass when a different column is named with __ prefix', () => {
@@ -107,9 +109,9 @@ describe('snapshotChecker', () => {
             { url: 'https://a.b/e', index: 'false', __follow: 'false' },
         ];
 
-        const result = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
+        const results = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
 
-        assert.equal(result.passed, true);
+        assertPassed(results, true);
     });
 
     [
@@ -131,12 +133,10 @@ describe('snapshotChecker', () => {
                 { url: 'https://a.b/d', index: 'true', follow: 'false' },
             ];
 
-            const result = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
+            const results = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
 
-            assert.equal(result.passed, passed);
-            messagePatterns.forEach((messagePattern, index) => {
-                assert.match(result.messages[index], messagePattern);
-            });
+            assertPassed(results, passed);
+            assertMessages(results, messagePatterns);
         });
     });
 });

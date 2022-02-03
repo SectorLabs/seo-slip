@@ -1,4 +1,8 @@
+const { newMessage, newEmptyItemResult } = require('../reporting');
+
 module.exports = (snapshotRules, previousReport) => {
+    const name = 'snapshotChecker';
+
     const missingUrlCountThreshold = (snapshotRules || {}).missingUrlCountThreshold || 0.3;
     const ignoreColumns = (snapshotRules || {}).ignoreColumns || [];
 
@@ -9,10 +13,7 @@ module.exports = (snapshotRules, previousReport) => {
 
     return {
         finalCheck: (analyses, report) => {
-            let result = {
-                passed: true,
-                messages: [],
-            };
+            let result = newEmptyItemResult();
 
             const reportMap = report.reduce((acc, itemReport) => {
                 acc[itemReport['url']] = itemReport;
@@ -37,7 +38,11 @@ module.exports = (snapshotRules, previousReport) => {
                         ) {
                             result.passed = false;
                             result.messages.push(
-                                `Previous ${key}=${previousValue}, now=${value} for url=${url}`
+                                newMessage(
+                                    url,
+                                    name,
+                                    `Previous ${key}=${previousValue}, now=${value}`
+                                )
                             );
                         }
                     });
@@ -51,12 +56,16 @@ module.exports = (snapshotRules, previousReport) => {
             if (missingUrlPercentage >= missingUrlCountThreshold) {
                 result.passed = false;
                 result.messages.push(
-                    `Previous URL count=${
-                        Object.keys(previousReportMap).length
-                    }, missing URL count=${
-                        missingUrls.length
-                    }, missing URL percentage=${missingUrlPercentage}, threshold=${missingUrlCountThreshold}\n` +
-                        missingUrls.join('\n')
+                    newMessage(
+                        '',
+                        name,
+                        `Previous URL count=${
+                            Object.keys(previousReportMap).length
+                        }, missing URL count=${
+                            missingUrls.length
+                        }, missing URL percentage=${missingUrlPercentage}, threshold=${missingUrlCountThreshold}\n` +
+                            missingUrls.join('\n')
+                    )
                 );
             }
 

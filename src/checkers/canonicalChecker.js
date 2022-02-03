@@ -2,7 +2,11 @@ const xpath = require('xpath-html');
 
 const { isHtmlDocument, tryGetContentByXPath } = require('../html');
 
+const { newMessage, newEmptyItemResult } = require('../reporting');
+
 module.exports = (canonicalRules) => {
+    const name = 'canonicalChecker';
+
     const getCanonicalUrl = (responseBody) => {
         const body = xpath.fromPageSource(responseBody);
         const hrefAttributeValue = tryGetContentByXPath(
@@ -27,10 +31,7 @@ module.exports = (canonicalRules) => {
             };
         },
         check: (analysis) => {
-            const result = {
-                passed: true,
-                messages: [],
-            };
+            const result = newEmptyItemResult();
 
             const canonicalRule = (canonicalRules || []).find((canonicalRule) =>
                 analysis.url.match(canonicalRule.url)
@@ -46,7 +47,11 @@ module.exports = (canonicalRules) => {
                 if (analysis.canonicalUrl !== expectedUrl) {
                     result.passed = false;
                     result.messages.push(
-                        `Expected canonicalUrl=${expectedUrl}, actual=${analysis.canonicalUrl}, url=${analysis.url}`
+                        newMessage(
+                            analysis.url,
+                            name,
+                            `Expected canonicalUrl=${expectedUrl}, actual=${analysis.canonicalUrl}`
+                        )
                     );
                 }
             }

@@ -1,9 +1,10 @@
 const assert = require('assert');
 const { canonicalChecker, statusCodeChecker } = require('../../src/checkers');
+const { newMessage } = require('../../src/reporting');
 
-const { assertMessages, buildItemData, run } = require('..');
+const { assertMessages, assertResults, buildItemData, run } = require('..');
 
-describe('canonicalChecker', () => {
+describe('reporting', () => {
     it('should properly report the messages', async () => {
         const url = 'https://www.site.com/';
         const path = '/';
@@ -35,7 +36,19 @@ describe('canonicalChecker', () => {
         assert.equal(itemReport.path, path);
         assert.equal(itemReport.code, code);
 
-        assert.equal(results.passed, false);
-        assertMessages(results, [/expected.+actual.+/i, /expected.+200.+actual.+201/i]);
+        const expectedResults = {
+            passed: false,
+            messages: [
+                newMessage(/.+/, /canonicalChecker/, /expected.+actual.+/i),
+                newMessage(/.+/, /statusCodeChecker/, /expected.+200.+actual.+201/i),
+            ],
+        };
+        assertResults(results, expectedResults);
+
+        const expectedMessages = [].concat.apply(
+            [],
+            expectedResults.messages.map((message) => message.text)
+        );
+        assertMessages(results, [].concat.apply([], expectedMessages));
     });
 });

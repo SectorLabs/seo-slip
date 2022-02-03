@@ -1,32 +1,19 @@
-const newEmptyAnalysis = () => ({});
+const {
+    newEmptyAnalysis,
+    newEmptyAnalyses,
+    mergeItemAnalysis,
+    pushItemAnalysis,
 
-const newEmptyAnalyses = () => [];
+    newEmptyItemReport,
+    newEmptyReport,
+    mergeItemReport,
+    pushItemReport,
 
-const mergeItemAnalysis = (a, b) => ({ ...a, ...b });
-
-const pushItemAnalysis = (itemAnalysis, analyses) => [...analyses, itemAnalysis];
-
-const newEmptyItemReport = () => ({});
-
-const newEmptyReport = () => [];
-
-const mergeItemReport = (a, b) => ({ ...a, ...b });
-
-const pushItemReport = (itemReport, report) => [...report, itemReport];
-
-const newEmptyItemResult = () => ({ passed: true, messages: [] });
-
-const newEmptyResults = () => ({ passed: true, messages: [] });
-
-const mergeItemResult = (a, b) => ({
-    passed: a.passed && b.passed,
-    messages: a.messages.concat(b.messages),
-});
-
-const pushItemResult = (itemResult, itemResults) => ({
-    passed: itemResult.passed && itemResults.passed,
-    messages: itemResult.messages.concat(itemResults.messages),
-});
+    newEmptyItemResult,
+    newEmptyResults,
+    mergeItemResult,
+    pushItemResult,
+} = require('../src/reporting');
 
 const run = async (checkers, itemsData) => {
     let analyses = newEmptyAnalyses();

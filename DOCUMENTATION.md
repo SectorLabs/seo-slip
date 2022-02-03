@@ -335,7 +335,7 @@ Called after an item was analysed.
 ```json
 {
     "passed": boolean,
-    "messages": [strings]
+    "messages": [{"url": string, "source": string, "text":  string}]
 }
 ```
 
