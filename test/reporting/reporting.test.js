@@ -1,6 +1,6 @@
 const assert = require('assert');
 const { canonicalChecker, statusCodeChecker } = require('../../src/checkers');
-const { newMessage } = require('../../src/reporting');
+const { newMessage, printResults } = require('../../src/reporting');
 
 const { assertMessages, assertResults, buildItemData, run } = require('..');
 
@@ -50,5 +50,10 @@ describe('reporting', () => {
             expectedResults.messages.map((message) => message.text)
         );
         assertMessages(results, [].concat.apply([], expectedMessages));
+
+        const humanFriendlyResults = printResults(results);
+        assert.match(humanFriendlyResults, /canonicalChecker/i);
+        assert.match(humanFriendlyResults, /statusCodeChecker/i);
+        assert.match(humanFriendlyResults, /2 message\(s\) for 1 URL\(s\)/i);
     });
 });

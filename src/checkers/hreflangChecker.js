@@ -5,7 +5,7 @@ const { newMessage, newEmptyItemResult } = require('../reporting');
 const { isHtmlDocument, noMemoryLeakStrCopy } = require('../html');
 
 module.exports = (hreflangRules) => {
-    const name = 'hreflang';
+    const name = 'hreflangChecker';
 
     const getHreflangUrls = (responseBody) => {
         try {

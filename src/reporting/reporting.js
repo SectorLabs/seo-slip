@@ -39,16 +39,20 @@ const printResults = (itemResults) => {
         resultsByUrl[message.url].push(message);
     });
 
+    let text = '';
+
     Object.keys(resultsByUrl).forEach((url) => {
         const messages = resultsByUrl[url];
-        console.log(url);
-        messages.forEach((message) => console.log(`  ${message.source}: ${message.text}`));
-        console.log();
+        text += `${url}\n`;
+        messages.forEach((message) => (text += `\t${message.source}: ${message.text}\n`));
+        text += `\n`;
     });
 
-    console.log(
-        `${itemResults.messages.length} message(s) for ${Object.keys(resultsByUrl).length} URL(s)`
-    );
+    text += `${itemResults.messages.length} message(s) for ${
+        Object.keys(resultsByUrl).length
+    } URL(s)`;
+
+    return text;
 };
 
 module.exports = {

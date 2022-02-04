@@ -377,3 +377,8 @@ A collection of helpers that can be used to integrate the SEO tests in a CI.
 ## HTML
 
 A collection of helpers that can be used to inspect or check the content of an HTML document.
+
+## Reporting
+
+Some helpers mostly used by the checkers to return results or reports in a consistent manner.
+It also provides a `printResults()` helper that can be used print the results in a more human friendly way.
