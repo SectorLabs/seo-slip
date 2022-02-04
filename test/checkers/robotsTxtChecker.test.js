@@ -2,7 +2,7 @@ const assert = require('assert');
 const mock = require('mock-require');
 const sinon = require('sinon');
 
-const { buildItemData, run } = require('..');
+const { assertMessages, assertPassed, buildItemData, run } = require('..');
 
 describe('robotsTxtChecker', async () => {
     const appUrl = 'https://www.site.com';
@@ -46,15 +46,13 @@ describe('robotsTxtChecker', async () => {
 
             const {
                 report: [itemReport],
-                results: [result],
-            } = await run(robotsTxtChecker(rules, appUrl), [itemData]);
+                results,
+            } = await run([robotsTxtChecker(rules, appUrl)], [itemData]);
 
             assert.equal(itemReport.isAllowedByRobotsTxt, allowed);
 
-            assert.equal(result.passed, passed);
-            messagePatterns.forEach((messagePattern, index) => {
-                assert.match(result.messages[index], messagePattern);
-            });
+            assertPassed(results, passed);
+            assertMessages(results, messagePatterns);
         });
     });
 
@@ -68,12 +66,12 @@ describe('robotsTxtChecker', async () => {
 
         const {
             report: [itemReport],
-            results: [result],
-        } = await run(robotsTxtChecker(rules, appUrl), [itemData]);
+            results,
+        } = await run([robotsTxtChecker(rules, appUrl)], [itemData]);
 
         assert.equal(itemReport.isAllowedByRobotsTxt, allowed);
 
-        assert.equal(result.passed, true);
+        assertPassed(results, true);
     });
 
     it('should use the custom headers when specified', async () => {
@@ -89,8 +87,8 @@ describe('robotsTxtChecker', async () => {
 
         const {
             report: [itemReport],
-            results: [result],
-        } = await run(robotsTxtChecker(rules, appUrl, customHeaders), [itemData]);
+            results,
+        } = await run([robotsTxtChecker(rules, appUrl, customHeaders)], [itemData]);
 
         assert.equal(
             fakeDownloadRobotsTxt.calledWith('https://www.site.com/robots.txt', customHeaders),
@@ -99,6 +97,6 @@ describe('robotsTxtChecker', async () => {
 
         assert.equal(itemReport.isAllowedByRobotsTxt, allowed);
 
-        assert.equal(result.passed, true);
+        assertPassed(results, true);
     });
 });

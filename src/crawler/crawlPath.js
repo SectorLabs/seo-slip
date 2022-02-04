@@ -3,6 +3,23 @@ const https = require('https');
 
 const Crawler = require('simplecrawler');
 
+const {
+    newEmptyAnalysis,
+    newEmptyAnalyses,
+    mergeItemAnalysis,
+    pushItemAnalysis,
+
+    newEmptyItemReport,
+    newEmptyReport,
+    mergeItemReport,
+    pushItemReport,
+
+    newEmptyItemResult,
+    newEmptyResults,
+    mergeItemResult,
+    pushItemResult,
+} = require('../reporting');
+
 module.exports = (fullPath, maxDepth, variables, checkers, done) => {
     const crawler = new Crawler(fullPath);
 
@@ -30,39 +47,30 @@ module.exports = (fullPath, maxDepth, variables, checkers, done) => {
     });
 
     const header = new Set();
-    const report = [];
-    const analyses = [];
+    let analyses = newEmptyAnalyses();
+    let report = newEmptyReport();
+    let results = newEmptyResults();
     let isCrawlCompleted = false;
 
-    const analyzeResponse = (queueItem, responseBody, response) => {
-        let analyse = {};
-
-        checkers.forEach((checker) => {
-            analyse = Object.assign(
-                analyse,
-                checker.analysis ? checker.analysis(queueItem, responseBody, response) : {}
-            );
-        });
-
-        return analyse;
-    };
-
-    const createItemReport = (analysis) => {
-        let itemReport = {};
-
-        checkers.forEach((checker) => {
-            itemReport = Object.assign(itemReport, checker.report ? checker.report(analysis) : {});
-        });
-
-        return itemReport;
-    };
-
     const fetchCompleted = (queueItem, responseBody, response) => {
-        const analysis = analyzeResponse(queueItem, responseBody, response);
-        const itemReport = createItemReport(analysis);
+        const analysis = checkers
+            .filter((checker) => checker.analysis)
+            .map((checker) => checker.analysis(queueItem, responseBody, response))
+            .reduce(mergeItemAnalysis, newEmptyAnalysis());
+        analyses = pushItemAnalysis(analysis, analyses);
 
-        analyses.push(analysis);
-        report.push(itemReport);
+        const itemReport = checkers
+            .filter((checker) => checker.report)
+            .map((checker) => checker.report(analysis))
+            .reduce(mergeItemReport, newEmptyItemReport());
+        report = pushItemReport(itemReport, report);
+
+        const itemResult = checkers
+            .filter((checker) => checker.check)
+            .map((checker) => checker.check(analysis))
+            .reduce(mergeItemResult, newEmptyItemResult());
+        results = pushItemResult(itemResult, results);
+
         Object.keys(itemReport).forEach((key) => header.add(key));
     };
 
@@ -74,37 +82,19 @@ module.exports = (fullPath, maxDepth, variables, checkers, done) => {
             isCrawlCompleted = true;
         }
 
-        let results = {
-            passed: true,
-            messages: [],
-        };
-
-        checkers.forEach((checker) => {
-            analyses.forEach((analysis) => {
-                const result = checker.check
-                    ? checker.check(analysis)
-                    : {
-                          passed: true,
-                          messages: [],
-                      };
-                results.passed &= result.passed;
-                results.messages = results.messages.concat(result.messages);
-            });
-            if (checker.finalCheck) {
-                const result = checker.finalCheck(analyses, report);
-                results.passed &= result.passed;
-                results.messages = results.messages.concat(result.messages);
-            }
-        });
+        results = checkers
+            .filter((checker) => checker.finalCheck)
+            .map((checker) => checker.finalCheck(analyses, report))
+            .reduce(pushItemResult, results);
 
         done(results, Array.from(header), report);
     };
 
     const fetchStarted = (queueItem) => {
         const stop = checkers
-            .map((checker) => checker.shouldStop)
-            .filter((shouldStop) => shouldStop)
-            .some((shouldStop) => shouldStop(queueItem));
+            .filter((checker) => checker.shouldStop)
+            .map((checker) => checker.shouldStop(queueItem))
+            .some((shouldStop) => shouldStop);
         if (stop) {
             crawler.stop();
             crawlCompleted();

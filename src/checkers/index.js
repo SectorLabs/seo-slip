@@ -6,7 +6,7 @@ const robotsTxtChecker = require('./robotsTxtChecker');
 const canonicalChecker = require('./canonicalChecker');
 const hreflangChecker = require('./hreflangChecker');
 const contentChecker = require('./contentChecker');
-const snapshotChecker = require('./snapshotChecher');
+const snapshotChecker = require('./snapshotChecker');
 
 module.exports = {
     loggerDummyChecker,

@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { statusCodeChecker } = require('../../src/checkers');
 
-const { buildItemData, run } = require('..');
+const { assertMessages, assertPassed, buildItemData, run } = require('..');
 
 describe('statusCodeChecker', () => {
     const rules = {
@@ -42,16 +42,14 @@ describe('statusCodeChecker', () => {
 
             const {
                 report: [itemReport],
-                results: [result],
-            } = await run(statusCodeChecker(rules), [itemData]);
+                results,
+            } = await run([statusCodeChecker(rules)], [itemData]);
 
             assert.equal(itemReport.code, code);
             assert.equal(itemReport.path, path);
 
-            assert.equal(result.passed, passed);
-            messagePatterns.forEach((messagePattern, index) => {
-                assert.match(result.messages[index], messagePattern);
-            });
+            assertPassed(results, passed);
+            assertMessages(results, messagePatterns);
         });
     });
 });

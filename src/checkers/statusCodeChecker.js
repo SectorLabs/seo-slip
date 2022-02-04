@@ -1,4 +1,8 @@
+const { newMessage, newEmptyItemResult } = require('../reporting');
+
 module.exports = (statusCodeRules) => {
+    const name = 'statusCodeChecker';
+
     const code = (statusCodeRules || {}).code || 200;
 
     const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -48,10 +52,7 @@ module.exports = (statusCodeRules) => {
             };
         },
         check: (analysis) => {
-            const result = {
-                passed: true,
-                messages: [],
-            };
+            const result = newEmptyItemResult();
 
             if (analysis.code === code) {
                 return result;
@@ -62,7 +63,11 @@ module.exports = (statusCodeRules) => {
                 if (exception.code.indexOf(analysis.code) === -1) {
                     result.passed = false;
                     result.messages.push(
-                        `Expected code(s)=${exception.code}, actual=${analysis.code}, url=${analysis.url}`
+                        newMessage(
+                            analysis.url,
+                            name,
+                            `Expected code(s)=${exception.code}, actual=${analysis.code}`
+                        )
                     );
                 }
                 return result;
@@ -70,7 +75,7 @@ module.exports = (statusCodeRules) => {
 
             result.passed = false;
             result.messages.push(
-                `Expected code(s)=${code}, actual=${analysis.code}, url=${analysis.url}`
+                newMessage(analysis.url, name, `Expected code(s)=${code}, actual=${analysis.code}`)
             );
 
             return result;

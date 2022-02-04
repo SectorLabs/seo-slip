@@ -1,37 +1,71 @@
-const newEmptyReport = () => ({});
+const {
+    newEmptyAnalysis,
+    newEmptyAnalyses,
+    mergeItemAnalysis,
+    pushItemAnalysis,
 
-const newEmptyItemResult = () => ({ passed: true, messages: [] });
+    newEmptyItemReport,
+    newEmptyReport,
+    mergeItemReport,
+    pushItemReport,
 
-const run = async (checker, itemsData) => {
-    const analyses = [];
-    let report = [];
-    let results = [];
+    newEmptyItemResult,
+    newEmptyResults,
+    mergeItemResult,
+    pushItemResult,
+} = require('../src/reporting');
 
-    await (checker.init && checker.init());
+const run = async (checkers, itemsData) => {
+    let analyses = newEmptyAnalyses();
+    let report = newEmptyReport();
+    let results = newEmptyResults();
+
+    for (let i = 0; i < checkers.length; i++) {
+        const checker = checkers[i];
+        if (checker.init) {
+            await checker.init();
+        }
+    }
 
     for (let i = 0; i < itemsData.length; i++) {
         const itemData = itemsData[i];
-        const analysis =
-            checker.analysis &&
-            checker.analysis(itemData.queueItem, itemData.responseBody, itemData.response);
-        analyses.push(analysis);
 
-        const shouldStop = (checker.shouldStop && checker.shouldStop()) || false;
+        const analysis = checkers
+            .filter((checker) => checker.analysis)
+            .map((checker) =>
+                checker.analysis(itemData.queueItem, itemData.responseBody, itemData.response)
+            )
+            .reduce(mergeItemAnalysis, newEmptyAnalysis());
+        analyses = pushItemAnalysis(analysis, analyses);
+
+        const shouldStop = checkers
+            .filter((checker) => checker.shouldStop)
+            .map((checker) => checker.shouldStop())
+            .some((shouldStop) => shouldStop);
         if (shouldStop) {
             break;
         }
 
-        const itemReport = (checker.report && checker.report(analysis)) || newEmptyReport();
-        report.push(itemReport);
+        const itemReport = checkers
+            .filter((checker) => checker.report)
+            .map((checker) => checker.report(analysis))
+            .reduce(mergeItemReport, newEmptyItemReport());
+        report = pushItemReport(itemReport, report);
 
-        const itemResult = (checker.check && checker.check(analysis)) || newEmptyItemResult();
-        results.push(itemResult);
+        const itemResult = checkers
+            .filter((checker) => checker.check)
+            .map((checker) => checker.check(analysis))
+            .reduce(mergeItemResult, newEmptyItemResult());
+        results = pushItemResult(itemResult, results);
     }
 
-    const finalResult =
-        (checker.finalCheck && checker.finalCheck(analyses, report)) || newEmptyReport();
+    const finalResult = checkers
+        .filter((checker) => checker.finalCheck)
+        .map((checker) => checker.finalCheck(analyses, report))
+        .reduce(mergeItemResult, newEmptyItemResult());
+    results = pushItemResult(finalResult, results);
 
-    return { report, results, finalResult };
+    return { report, results };
 };
 
 module.exports = run;

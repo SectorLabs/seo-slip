@@ -1,8 +1,12 @@
 const xpath = require('xpath-html');
 
+const { newMessage, newEmptyItemResult } = require('../reporting');
+
 const { isHtmlDocument, noMemoryLeakStrCopy } = require('../html');
 
 module.exports = (hreflangRules) => {
+    const name = 'hreflangChecker';
+
     const getHreflangUrls = (responseBody) => {
         try {
             const hreflangElements = xpath
@@ -45,10 +49,7 @@ module.exports = (hreflangRules) => {
             return report;
         },
         check: (analysis) => {
-            const result = {
-                passed: true,
-                messages: [],
-            };
+            const result = newEmptyItemResult();
 
             const hreflangRule = (hreflangRules || []).find((hreflangRule) =>
                 analysis.url.match(hreflangRule.url)
@@ -66,7 +67,11 @@ module.exports = (hreflangRules) => {
                     if (analysis.hreflangUrls[hreflang] !== expectedUrl) {
                         result.passed = false;
                         result.messages.push(
-                            `For lang=${hreflang}, expected href=${expectedUrl}, actual=${analysis.hreflangUrls[hreflang]}, url=${analysis.url}`
+                            newMessage(
+                                analysis.url,
+                                name,
+                                `For lang=${hreflang}, expected href=${expectedUrl}, actual=${analysis.hreflangUrls[hreflang]}`
+                            )
                         );
                     }
                 });

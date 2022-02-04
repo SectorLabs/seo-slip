@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { maxPageCountChecker } = require('../../src/checkers');
 
-const { buildItemData, run } = require('..');
+const { assertMessages, assertPassed, buildItemData, run } = require('..');
 
 describe('maxPageCountChecker', () => {
     [
@@ -15,17 +15,12 @@ describe('maxPageCountChecker', () => {
             const itemData = buildItemData();
             const itemsData = Array(itemCount).fill(itemData);
 
-            const { results, finalResult } = await run(
-                maxPageCountChecker(maxPageCount),
-                itemsData
-            );
+            const { results, report } = await run([maxPageCountChecker(maxPageCount)], itemsData);
 
-            assert.equal(results.length, Math.min(itemCount, maxPageCount));
+            assert.equal(report.length, Math.min(itemCount, maxPageCount));
 
-            assert.equal(finalResult.passed, passed);
-            messagePatterns.forEach((messagePattern, index) => {
-                assert.match(finalResult.messages[index], messagePattern);
-            });
+            assertPassed(results, passed);
+            assertMessages(results, messagePatterns);
         });
     });
 });

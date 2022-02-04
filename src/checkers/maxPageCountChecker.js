@@ -1,4 +1,7 @@
+const { newMessage, newEmptyItemResult } = require('../reporting');
+
 module.exports = (maxPageCount) => {
+    const name = 'maxPageCountChecker';
     let pageCount = 0;
     return {
         analysis: () => {
@@ -10,10 +13,14 @@ module.exports = (maxPageCount) => {
         },
         finalCheck: (analyses, report) => {
             const passed = pageCount <= maxPageCount;
-            return {
-                passed: passed,
-                messages: passed ? [] : [`Limit maxPageCount=${maxPageCount} exceeded`],
-            };
+            const result = newEmptyItemResult();
+            result.passed = passed;
+            if (!passed) {
+                result.messages.push(
+                    newMessage('', name, `Limit maxPageCount=${maxPageCount} exceeded`)
+                );
+            }
+            return result;
         },
     };
 };
