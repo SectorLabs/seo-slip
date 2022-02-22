@@ -5,6 +5,7 @@ module.exports = (snapshotRules, previousReport) => {
 
     const missingUrlCountThreshold = (snapshotRules || {}).missingUrlCountThreshold || 0.3;
     const ignoreColumns = (snapshotRules || {}).ignoreColumns || [];
+    const ignoreUrls = (snapshotRules || {}).ignoreUrls || [];
 
     const previousReportMap = previousReport.reduce((acc, itemReport) => {
         acc[itemReport['url']] = itemReport;
@@ -34,6 +35,7 @@ module.exports = (snapshotRules, previousReport) => {
                         if (
                             previousValue !== serializedValue &&
                             ignoreColumns.indexOf(key) === -1 &&
+                            ignoreUrls.indexOf(url) === -1 &&
                             !key.startsWith('__')
                         ) {
                             result.passed = false;

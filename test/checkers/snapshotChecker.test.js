@@ -78,7 +78,25 @@ describe('snapshotChecker', () => {
         assertMessages(results, [/previous.+follow.+true.+now.+false/i]);
     });
 
-    it('should pass when a different column is specified in the ignore list', () => {
+    it('should pass when an url is different and also specified in the ignore list', () => {
+        const rules = { ignoreUrls: ['https://a.b/e'] };
+        const previousReport = [
+            { url: 'https://a.b/c', index: 'true', follow: 'true' },
+            { url: 'https://a.b/d', index: 'true', follow: 'false' },
+            { url: 'https://a.b/e', index: 'false', follow: 'true' },
+        ];
+        const currentReport = [
+            { url: 'https://a.b/c', index: 'true', follow: 'true' },
+            { url: 'https://a.b/d', index: 'true', follow: 'false' },
+            { url: 'https://a.b/e', index: 'false', follow: 'false' },
+        ];
+
+        const results = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
+
+        assertPassed(results, true);
+    });
+
+    it('should pass when a column is different and also specified in the ignore list', () => {
         const rules = { ignoreColumns: ['follow'] };
         const previousReport = [
             { url: 'https://a.b/c', index: 'true', follow: 'true' },

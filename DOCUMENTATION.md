@@ -244,14 +244,17 @@ It is up to the user to store and retrieve using its own custom mechanism the re
 The rules:
 ```json
 {
-    "missingUrlCountThreshold": number
+    "missingUrlCountThreshold": number,
+    "ignoreColumns": [string],
+    "ignoreUrls": [string]
 }
 ```
 The default value `missingUrlCountThreshold` of is 30. In case more than `missingUrlCountThreshold`% URLs from the previous report are not found in the new report then it's an error.
 
 For each URL found in both the previous and the new report, the columns of the reports are compared as well.
 In case a single column is different then it's an error.
-The column of which their name start with `__` are skipped from the comparison. For example `__downloadTime`.
+The columns specified in `ignoreColumns` or prefixed with `__`, like `__downloadTime`, are skipped from the comparison.
+The URLs specified in `ignoreUrls` are skipped from the comparison, however the total URL count includes these URLs as well.
  
 
 ### StatusCodeChecker
