@@ -7,6 +7,7 @@ const canonicalChecker = require('./canonicalChecker');
 const hreflangChecker = require('./hreflangChecker');
 const contentChecker = require('./contentChecker');
 const snapshotChecker = require('./snapshotChecker');
+const dataSizeChecker = require('./dataSizeChecker');
 
 module.exports = {
     loggerDummyChecker,
@@ -18,4 +19,5 @@ module.exports = {
     hreflangChecker,
     contentChecker,
     snapshotChecker,
+    dataSizeChecker,
 };
