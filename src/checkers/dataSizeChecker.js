@@ -28,7 +28,7 @@ module.exports = (dataSizeRules) => {
 
             const rule = rules.find((rule) => {
                 return (
-                    (!rule.condition.path || analysis.path === rule.condition.path) &&
+                    (!rule.condition.path || (analysis.path || '').includes(rule.condition.path)) &&
                     (!rule.condition['content-type'] ||
                         (analysis.contentType || '').includes(rule.condition['content-type']))
                 );
