@@ -135,6 +135,26 @@ However, the same regexps might be reused in a way or another by other checkers 
 so for uniformity and maintainability sake, it is recommended all regexp expected to match the same URLs to be identical.
 
 
+### DataSizeChecker
+This checker can be used to ensure that a resource size is within reasonable limits.
+Example rules:
+
+```json
+[
+    {
+        "condition": {
+            "content-type": string,
+            "path": string
+        },
+        "minDataSize": number,
+        "maxDataSize": number,
+        "minUncompressedDataSize": number,
+        "maxUncompressedDataSize": number
+    }
+]
+```
+
+
 ### HreflangChecker
 This checker makes sure an HTML document is specifying in the header URLs to other HTML documents with the same content, but in different languages.
 Example rules:
