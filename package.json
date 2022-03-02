@@ -1,6 +1,6 @@
 {
     "name": "@sector-labs/seo-slip",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Catches SEO regressions by sampling and checking a website against a set of rules",
     "main": "index.js",
     "scripts": {
