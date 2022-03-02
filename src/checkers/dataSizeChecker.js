@@ -19,8 +19,8 @@ module.exports = (dataSizeRules) => {
         report: (analysis) => {
             return {
                 contentType: analysis.contentType,
-                dataSize: analysis.dataSize,
-                uncompressedDataSize: analysis.uncompressedDataSize,
+                __dataSize: analysis.dataSize,
+                __uncompressedDataSize: analysis.uncompressedDataSize,
             };
         },
         check: (analysis) => {

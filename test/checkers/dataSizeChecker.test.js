@@ -73,8 +73,8 @@ describe('dataSizeChecker', () => {
                 results,
             } = await run([dataSizeChecker(rules)], [itemData]);
 
-            assert.equal(itemReport.dataSize, actualDataSize);
-            assert.equal(itemReport.uncompressedDataSize, uncompressedDataSize);
+            assert.equal(itemReport.__dataSize, actualDataSize);
+            assert.equal(itemReport.__uncompressedDataSize, uncompressedDataSize);
 
             assertPassed(results, passed);
             assertMessages(results, messagePatterns);
