@@ -11,7 +11,7 @@ module.exports = (dataSizeRules) => {
             return {
                 url: queueItem.url,
                 path: queueItem.path,
-                contentType: response.headers['content-type'],
+                contentType: response && response.headers && response.headers['content-type'],
                 dataSize: queueItem.stateData.actualDataSize,
                 uncompressedDataSize: responseBody.length,
             };
