@@ -9,6 +9,14 @@ module.exports = (statusCodeRules) => {
 
     const normalizeCode = (code) => (typeof code === 'number' ? [code] : code);
 
+    const isIgnoredPath = (path) => {
+        return statusCodeRules.ignorePathsFrom404
+            ? statusCodeRules.ignorePathsFrom404.some((ignored404Path) =>
+                  path.includes(encodeURI(ignored404Path))
+              )
+            : false;
+    };
+
     const normalizeExceptions = (exceptions) => {
         // Output example:
         // [
@@ -55,6 +63,10 @@ module.exports = (statusCodeRules) => {
             const result = newEmptyItemResult();
 
             if (analysis.code === code) {
+                return result;
+            }
+
+            if (analysis.code === 404 && isIgnoredPath(analysis.path)) {
                 return result;
             }
 
