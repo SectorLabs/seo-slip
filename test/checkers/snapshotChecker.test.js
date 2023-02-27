@@ -96,6 +96,26 @@ describe('snapshotChecker', () => {
         assertPassed(results, true);
     });
 
+    it('should pass when mandatoryElementCount is different', () => {
+        const rules = { mandatoryElementSelector: ['selector'] };
+        const previousReport = [
+            { url: 'https://a.b/c', mandatoryElementCount: 9, code: 200 },
+            { url: 'https://a.b/d', mandatoryElementCount: 9, code: 200 },
+            { url: 'https://a.b/e', mandatoryElementCount: 19, code: 200 },
+            { url: 'https://a.b/f', mandatoryElementCount: 19, code: 200 },
+        ];
+        const currentReport = [
+            { url: 'https://a.b/c', mandatoryElementCount: 8, code: 200 },
+            { url: 'https://a.b/d', mandatoryElementCount: 10, code: 200 },
+            { url: 'https://a.b/e', mandatoryElementCount: 9, code: 200 },
+            { url: 'https://a.b/f', mandatoryElementCount: 29, code: 200 },
+        ];
+
+        const results = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
+
+        assertPassed(results, true);
+    });
+
     it('should pass when mandatoryElementCount is < 10 and previous report and 0 in current report', () => {
         const rules = { mandatoryElementSelector: ['selector'] };
         const previousReport = [{ url: 'https://a.b/c', mandatoryElementCount: 9, code: 200 }];
@@ -118,8 +138,14 @@ describe('snapshotChecker', () => {
 
     it('should pass when mandatoryElementCount is > 0 and status code is 200 in current report', () => {
         const rules = { mandatoryElementSelector: ['selector'] };
-        const previousReport = [{ url: 'https://a.b/c', mandatoryElementCount: 0, code: 404 }];
-        const currentReport = [{ url: 'https://a.b/c', mandatoryElementCount: 1, code: 200 }];
+        const previousReport = [
+            { url: 'https://a.b/c', mandatoryElementCount: 0, code: 404 },
+            { url: 'https://a.b/d', mandatoryElementCount: 0, code: 404 },
+        ];
+        const currentReport = [
+            { url: 'https://a.b/c', mandatoryElementCount: 1, code: 200 },
+            { url: 'https://a.b/d', mandatoryElementCount: 11, code: 200 },
+        ];
 
         const results = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
 
