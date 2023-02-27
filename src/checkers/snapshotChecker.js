@@ -26,6 +26,9 @@ module.exports = (snapshotRules, previousReport) => {
 
     const getMandatoryElementCount = (string) => Number(string.split('_').length - 1);
 
+    const isLowInventoryUrl = (reportItem) =>
+        reportItem['mandatoryElementCount'] < 10 && reportItem['mandatoryElementCount'] > 0;
+
     return {
         analysis: (queueItem, responseBody, response) => {
             const isHtmlDoc = isHtmlDocument(responseBody, response);
@@ -65,10 +68,10 @@ module.exports = (snapshotRules, previousReport) => {
                             ignoreUrls.indexOf(url) === -1 &&
                             !key.startsWith('__') &&
                             !(
-                                previousReportItem['mandatoryElementCount'] < 10 &&
-                                previousReportItem['mandatoryElementCount'] > 0
+                                isLowInventoryUrl(previousReportItem) &&
+                                reportItem['mandatoryElementCount'] === 0
                             ) &&
-                            !(reportItem['mandatoryElementCount'] > 0 && reportItem['code'] === 200)
+                            !(reportItem['mandatoryElementCount'] > 0)
                         ) {
                             result.passed = false;
                             result.messages.push(
