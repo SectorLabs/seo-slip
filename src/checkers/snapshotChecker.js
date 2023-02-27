@@ -1,3 +1,6 @@
+const xpath = require('xpath-html');
+const { isHtmlDocument, tryGetContentByXPath } = require('../html');
+
 const { newMessage, newEmptyItemResult } = require('../reporting');
 
 module.exports = (snapshotRules, previousReport) => {
@@ -12,7 +15,31 @@ module.exports = (snapshotRules, previousReport) => {
         return acc;
     }, {});
 
+    const getMandatoryElement = (responseBody) => {
+        const body = xpath.fromPageSource(responseBody);
+        const hrefAttributeValue = tryGetContentByXPath(
+            body,
+            snapshotRules.mandatoryElementSelector
+        ).join(' ');
+        return hrefAttributeValue;
+    };
+
+    const getMandatoryElementCount = (string) => Number(string.split('_').length - 1);
+
     return {
+        analysis: (queueItem, responseBody, response) => {
+            const isHtmlDoc = isHtmlDocument(responseBody, response);
+            return {
+                mandatoryElementCount:
+                    getMandatoryElementCount(isHtmlDoc ? getMandatoryElement(responseBody) : '') ||
+                    0,
+            };
+        },
+        report: (analysis) => {
+            return {
+                mandatoryElementCount: analysis.mandatoryElementCount,
+            };
+        },
         finalCheck: (analyses, report) => {
             let result = newEmptyItemResult();
 
@@ -36,7 +63,11 @@ module.exports = (snapshotRules, previousReport) => {
                             previousValue !== serializedValue &&
                             ignoreColumns.indexOf(key) === -1 &&
                             ignoreUrls.indexOf(url) === -1 &&
-                            !key.startsWith('__')
+                            !key.startsWith('__') &&
+                            !(
+                                previousReportItem['mandatoryElementCount'] < 10 &&
+                                previousReportItem['mandatoryElementCount'] > 0
+                            )
                         ) {
                             result.passed = false;
                             result.messages.push(
