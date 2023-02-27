@@ -96,6 +96,36 @@ describe('snapshotChecker', () => {
         assertPassed(results, true);
     });
 
+    it('should pass when mandatoryElementCount is < 10 and previous report and 0 in current report', () => {
+        const rules = { mandatoryElementSelector: ['selector'] };
+        const previousReport = [{ url: 'https://a.b/c', mandatoryElementCount: 9, code: 200 }];
+        const currentReport = [{ url: 'https://a.b/c', mandatoryElementCount: 0, code: 404 }];
+
+        const results = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
+
+        assertPassed(results, true);
+    });
+
+    it('should fail when mandatoryElementCount is > 10 and previous report and 0 in current report', () => {
+        const rules = { mandatoryElementSelector: ['selector'] };
+        const previousReport = [{ url: 'https://a.b/c', mandatoryElementCount: 11, code: 200 }];
+        const currentReport = [{ url: 'https://a.b/c', mandatoryElementCount: 0, code: 404 }];
+
+        const results = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
+
+        assertPassed(results, false);
+    });
+
+    it('should pass when mandatoryElementCount is > 0 and status code is 200 in current report', () => {
+        const rules = { mandatoryElementSelector: ['selector'] };
+        const previousReport = [{ url: 'https://a.b/c', mandatoryElementCount: 0, code: 404 }];
+        const currentReport = [{ url: 'https://a.b/c', mandatoryElementCount: 1, code: 200 }];
+
+        const results = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
+
+        assertPassed(results, true);
+    });
+
     it('should pass when a column is different and also specified in the ignore list', () => {
         const rules = { ignoreColumns: ['follow'] };
         const previousReport = [
