@@ -67,7 +67,8 @@ module.exports = (snapshotRules, previousReport) => {
                             !(
                                 previousReportItem['mandatoryElementCount'] < 10 &&
                                 previousReportItem['mandatoryElementCount'] > 0
-                            )
+                            ) &&
+                            !(reportItem['mandatoryElementCount'] > 0 && reportItem['code'] === 200)
                         ) {
                             result.passed = false;
                             result.messages.push(
