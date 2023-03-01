@@ -26,7 +26,8 @@ module.exports = (snapshotRules, previousReport) => {
 
     const isLowInventoryUrl = (reportItem) =>
         reportItem['mandatoryElementCount'] < mandatoryElement.hysteresis &&
-        reportItem['mandatoryElementCount'] > 0;
+        reportItem['mandatoryElementCount'] > 0 &&
+        reportItem['code'] === 200;
 
     return {
         analysis: (queueItem, responseBody, response) => {
@@ -68,9 +69,20 @@ module.exports = (snapshotRules, previousReport) => {
                             !key.startsWith('__') &&
                             !(
                                 isLowInventoryUrl(previousReportItem) &&
-                                reportItem['mandatoryElementCount'] === 0
+                                reportItem['mandatoryElementCount'] === 0 &&
+                                reportItem['code'] === 404
                             ) &&
-                            !(reportItem['mandatoryElementCount'] > 0)
+                            !(
+                                reportItem['mandatoryElementCount'] > 0 &&
+                                reportItem['code'] === 200 &&
+                                previousReportItem['code'] === 404
+                            ) &&
+                            !(
+                                reportItem['mandatoryElementCount'] > 0 &&
+                                previousReportItem['mandatoryElementCount'] > 0 &&
+                                reportItem['code'] === 200 &&
+                                previousReportItem['code'] === 200
+                            )
                         ) {
                             result.passed = false;
                             result.messages.push(
