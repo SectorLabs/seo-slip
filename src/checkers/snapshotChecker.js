@@ -9,6 +9,7 @@ module.exports = (snapshotRules, previousReport) => {
     const missingUrlCountThreshold = (snapshotRules || {}).missingUrlCountThreshold || 0.3;
     const ignoreColumns = (snapshotRules || {}).ignoreColumns || [];
     const ignoreUrls = (snapshotRules || {}).ignoreUrls || [];
+    const mandatoryElement = (snapshotRules || {}).mandatoryElement || [];
 
     const previousReportMap = previousReport.reduce((acc, itemReport) => {
         acc[itemReport['url']] = itemReport;
@@ -17,17 +18,15 @@ module.exports = (snapshotRules, previousReport) => {
 
     const getMandatoryElement = (responseBody) => {
         const body = xpath.fromPageSource(responseBody);
-        const hrefAttributeValue = tryGetContentByXPath(
-            body,
-            snapshotRules.mandatoryElementSelector
-        ).join(' ');
+        const hrefAttributeValue = tryGetContentByXPath(body, mandatoryElement.selector).join(' ');
         return hrefAttributeValue;
     };
 
     const getMandatoryElementCount = (string) => Number(string.split('_').length - 1);
 
     const isLowInventoryUrl = (reportItem) =>
-        reportItem['mandatoryElementCount'] < 10 && reportItem['mandatoryElementCount'] > 0;
+        reportItem['mandatoryElementCount'] < mandatoryElement.hysteresis &&
+        reportItem['mandatoryElementCount'] > 0;
 
     return {
         analysis: (queueItem, responseBody, response) => {

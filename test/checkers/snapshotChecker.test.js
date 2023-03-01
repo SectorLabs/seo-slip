@@ -97,7 +97,7 @@ describe('snapshotChecker', () => {
     });
 
     it('should pass when mandatoryElementCount is different', () => {
-        const rules = { mandatoryElementSelector: ['selector'] };
+        const rules = { mandatoryElement: { selector: ['//selector'], hysteresis: 10 } };
         const previousReport = [
             { url: 'https://a.b/c', mandatoryElementCount: 9, code: 200 },
             { url: 'https://a.b/d', mandatoryElementCount: 9, code: 200 },
@@ -117,7 +117,7 @@ describe('snapshotChecker', () => {
     });
 
     it('should pass when mandatoryElementCount is < 10 and previous report and 0 in current report', () => {
-        const rules = { mandatoryElementSelector: ['selector'] };
+        const rules = { mandatoryElement: { selector: ['//selector'], hysteresis: 10 } };
         const previousReport = [{ url: 'https://a.b/c', mandatoryElementCount: 9, code: 200 }];
         const currentReport = [{ url: 'https://a.b/c', mandatoryElementCount: 0, code: 404 }];
 
@@ -127,7 +127,7 @@ describe('snapshotChecker', () => {
     });
 
     it('should fail when mandatoryElementCount is > 10 and previous report and 0 in current report', () => {
-        const rules = { mandatoryElementSelector: ['selector'] };
+        const rules = { mandatoryElement: { selector: ['//selector'], hysteresis: 10 } };
         const previousReport = [{ url: 'https://a.b/c', mandatoryElementCount: 11, code: 200 }];
         const currentReport = [{ url: 'https://a.b/c', mandatoryElementCount: 0, code: 404 }];
 
@@ -137,7 +137,7 @@ describe('snapshotChecker', () => {
     });
 
     it('should pass when mandatoryElementCount is > 0 and status code is 200 in current report', () => {
-        const rules = { mandatoryElementSelector: ['selector'] };
+        const rules = { mandatoryElement: { selector: ['//selector'], hysteresis: 10 } };
         const previousReport = [
             { url: 'https://a.b/c', mandatoryElementCount: 0, code: 404 },
             { url: 'https://a.b/d', mandatoryElementCount: 0, code: 404 },
