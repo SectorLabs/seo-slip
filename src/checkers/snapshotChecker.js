@@ -25,17 +25,18 @@ module.exports = (snapshotRules, previousReport) => {
     const getMandatoryElementCount = (string) => Number(string.split('_').length - 1);
 
     const isLowInventoryUrl = (reportItem) =>
-        reportItem['mandatoryElementCount'] < mandatoryElement.hysteresis &&
-        reportItem['mandatoryElementCount'] > 0 &&
-        reportItem['code'] === 200;
+        Number(reportItem['mandatoryElementCount']) < mandatoryElement.hysteresis &&
+        Number(reportItem['mandatoryElementCount']) > 0 &&
+        Number(reportItem['code']) === 200;
 
     return {
         analysis: (queueItem, responseBody, response) => {
             const isHtmlDoc = isHtmlDocument(responseBody, response);
             return {
-                mandatoryElementCount:
+                mandatoryElementCount: Number(
                     getMandatoryElementCount(isHtmlDoc ? getMandatoryElement(responseBody) : '') ||
-                    0,
+                        0
+                ),
             };
         },
         report: (analysis) => {
@@ -62,6 +63,7 @@ module.exports = (snapshotRules, previousReport) => {
                         const previousValue = previousReportItem[key];
                         const value = reportItem[key];
                         const serializedValue = value === undefined ? '' : value.toString();
+
                         if (
                             previousValue !== serializedValue &&
                             ignoreColumns.indexOf(key) === -1 &&
@@ -69,21 +71,22 @@ module.exports = (snapshotRules, previousReport) => {
                             !key.startsWith('__') &&
                             !(
                                 isLowInventoryUrl(previousReportItem) &&
-                                reportItem['mandatoryElementCount'] === 0 &&
-                                reportItem['code'] === 404
+                                Number(reportItem['mandatoryElementCount']) === 0 &&
+                                Number(reportItem['code']) === 404
                             ) &&
                             !(
-                                reportItem['mandatoryElementCount'] > 0 &&
-                                reportItem['code'] === 200 &&
-                                previousReportItem['code'] === 404
+                                Number(reportItem['mandatoryElementCount']) > 0 &&
+                                Number(reportItem['code']) === 200 &&
+                                Number(previousReportItem['code']) === 404
                             ) &&
                             !(
-                                reportItem['mandatoryElementCount'] > 0 &&
-                                previousReportItem['mandatoryElementCount'] > 0 &&
-                                reportItem['code'] === 200 &&
-                                previousReportItem['code'] === 200
+                                Number(reportItem['mandatoryElementCount']) > 0 &&
+                                Number(previousReportItem['mandatoryElementCount']) > 0 &&
+                                Number(reportItem['code']) === 200 &&
+                                Number(previousReportItem['code']) === 200
                             )
                         ) {
+                            console.log(key);
                             result.passed = false;
                             result.messages.push(
                                 newMessage(
