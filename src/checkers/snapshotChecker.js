@@ -86,7 +86,6 @@ module.exports = (snapshotRules, previousReport) => {
                                 Number(previousReportItem['code']) === 200
                             )
                         ) {
-                            console.log(key);
                             result.passed = false;
                             result.messages.push(
                                 newMessage(
