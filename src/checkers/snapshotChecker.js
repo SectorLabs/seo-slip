@@ -18,11 +18,11 @@ module.exports = (snapshotRules, previousReport) => {
 
     const getMandatoryElement = (responseBody) => {
         const body = xpath.fromPageSource(responseBody);
-        const hrefAttributeValue = tryGetContentByXPath(body, mandatoryElement.selector).join(' ');
+        const hrefAttributeValue = tryGetContentByXPath(body, mandatoryElement.selector).join('-');
         return hrefAttributeValue;
     };
 
-    const getMandatoryElementCount = (string) => Number(string.split('_').length - 1);
+    const getMandatoryElementCount = (string) => (string === '' ? 0 : string.split('-').length);
 
     const isLowInventoryUrl = (reportItem) =>
         Number(reportItem['mandatoryElementCount']) < mandatoryElement.hysteresis &&
