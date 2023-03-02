@@ -1,3 +1,6 @@
+const xpath = require('xpath-html');
+const { isHtmlDocument, tryGetContentByXPath } = require('../html');
+
 const { newMessage, newEmptyItemResult } = require('../reporting');
 
 module.exports = (snapshotRules, previousReport) => {
@@ -6,13 +9,41 @@ module.exports = (snapshotRules, previousReport) => {
     const missingUrlCountThreshold = (snapshotRules || {}).missingUrlCountThreshold || 0.3;
     const ignoreColumns = (snapshotRules || {}).ignoreColumns || [];
     const ignoreUrls = (snapshotRules || {}).ignoreUrls || [];
+    const mandatoryElement = (snapshotRules || {}).mandatoryElement || [];
 
     const previousReportMap = previousReport.reduce((acc, itemReport) => {
         acc[itemReport['url']] = itemReport;
         return acc;
     }, {});
 
+    const getMandatoryElement = (responseBody) => {
+        const body = xpath.fromPageSource(responseBody);
+        const hrefAttributeValue = tryGetContentByXPath(body, mandatoryElement.selector).join(' ');
+        return hrefAttributeValue;
+    };
+
+    const getMandatoryElementCount = (string) => Number(string.split('_').length - 1);
+
+    const isLowInventoryUrl = (reportItem) =>
+        Number(reportItem['mandatoryElementCount']) < mandatoryElement.hysteresis &&
+        Number(reportItem['mandatoryElementCount']) > 0 &&
+        Number(reportItem['code']) === 200;
+
     return {
+        analysis: (queueItem, responseBody, response) => {
+            const isHtmlDoc = isHtmlDocument(responseBody, response);
+            return {
+                mandatoryElementCount: Number(
+                    getMandatoryElementCount(isHtmlDoc ? getMandatoryElement(responseBody) : '') ||
+                        0
+                ),
+            };
+        },
+        report: (analysis) => {
+            return {
+                mandatoryElementCount: analysis.mandatoryElementCount,
+            };
+        },
         finalCheck: (analyses, report) => {
             let result = newEmptyItemResult();
 
@@ -32,11 +63,28 @@ module.exports = (snapshotRules, previousReport) => {
                         const previousValue = previousReportItem[key];
                         const value = reportItem[key];
                         const serializedValue = value === undefined ? '' : value.toString();
+
                         if (
                             previousValue !== serializedValue &&
                             ignoreColumns.indexOf(key) === -1 &&
                             ignoreUrls.indexOf(url) === -1 &&
-                            !key.startsWith('__')
+                            !key.startsWith('__') &&
+                            !(
+                                isLowInventoryUrl(previousReportItem) &&
+                                Number(reportItem['mandatoryElementCount']) === 0 &&
+                                Number(reportItem['code']) === 404
+                            ) &&
+                            !(
+                                Number(reportItem['mandatoryElementCount']) > 0 &&
+                                Number(reportItem['code']) === 200 &&
+                                Number(previousReportItem['code']) === 404
+                            ) &&
+                            !(
+                                Number(reportItem['mandatoryElementCount']) > 0 &&
+                                Number(previousReportItem['mandatoryElementCount']) > 0 &&
+                                Number(reportItem['code']) === 200 &&
+                                Number(previousReportItem['code']) === 200
+                            )
                         ) {
                             result.passed = false;
                             result.messages.push(
