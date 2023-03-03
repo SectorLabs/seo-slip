@@ -78,7 +78,7 @@ describe('snapshotChecker', () => {
         assertMessages(results, [/previous.+follow.+true.+now.+false/i]);
     });
 
-    it('should pass when an url is different and also specified in the ignore list', () => {
+    it('should pass when content for the url is different but specified in the ignore list', () => {
         const rules = { ignoreUrls: ['/e'] };
         const previousReport = [
             { url: 'https://a.b/c', index: 'true', follow: 'true' },
@@ -96,7 +96,7 @@ describe('snapshotChecker', () => {
         assertPassed(results, true);
     });
 
-    it('should pass when an url is different and also specified in the ignore list', () => {
+    it('should pass when content for the url is different but specified in the ignore list', () => {
         const rules = { ignoreUrls: ['/e', '/d'] };
         const previousReport = [
             { url: 'https://a.b/c', index: 'true', follow: 'true' },
@@ -114,7 +114,7 @@ describe('snapshotChecker', () => {
         assertPassed(results, true);
     });
 
-    it('should fail when an url is different and not specified in ignore list', () => {
+    it('should fail when content for the url is different and not specified in ignore list', () => {
         const rules = { ignoreUrls: ['/e', '/d'] };
         const previousReport = [
             { url: 'https://a.b/c', index: 'true', follow: 'true' },
