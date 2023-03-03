@@ -35,9 +35,7 @@ module.exports = (snapshotRules, previousReport) => {
         Number(reportItem['mandatoryElementCount']) > 0 &&
         Number(reportItem['code']) === 200;
 
-    const isIgnoredUrl = (url) => {
-        return ignoreUrls.find((ignoreUrl) => url.match(ignoreUrl));
-    };
+    const isIgnoredUrl = (url) => ignoreUrls.find((ignoreUrl) => url.match(ignoreUrl));
 
     return {
         analysis: (queueItem, responseBody, response) => {
