@@ -57,7 +57,11 @@ module.exports = (snapshotRules, previousReport) => {
                 const previousReportItem = previousReportMap[url];
                 const reportItem = reportMap[url];
                 if (!reportItem) {
-                    missingUrls.push(url);
+                    if (
+                        !ignoreUrls.some((ignoreUrl) => previousReportItem.url.includes(ignoreUrl))
+                    ) {
+                        missingUrls.push(url);
+                    }
                 } else {
                     Object.keys(previousReportItem).forEach((key) => {
                         const previousValue = previousReportItem[key];
