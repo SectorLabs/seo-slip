@@ -67,7 +67,7 @@ module.exports = (snapshotRules, previousReport) => {
                         if (
                             previousValue !== serializedValue &&
                             ignoreColumns.indexOf(key) === -1 &&
-                            ignoreUrls.indexOf(url) === -1 &&
+                            !ignoreUrls.some((ignoreUrl) => url.includes(ignoreUrl)) &&
                             !key.startsWith('__') &&
                             !(
                                 isLowInventoryUrl(previousReportItem) &&
