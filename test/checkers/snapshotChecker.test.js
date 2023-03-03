@@ -152,7 +152,7 @@ describe('snapshotChecker', () => {
         assertPassed(results, true);
     });
 
-    it('should pass when mandatoryElementCount is < 10 and previous report and 0 in current report', () => {
+    it('should pass when mandatoryElementCount is < 10 in previous report and 0 in current report', () => {
         const rules = { mandatoryElement: { selector: ['//selector'], hysteresis: 10 } };
         const previousReport = [{ url: 'https://a.b/c', mandatoryElementCount: '9', code: '200' }];
         const currentReport = [{ url: 'https://a.b/c', mandatoryElementCount: 0, code: 404 }];
@@ -162,7 +162,37 @@ describe('snapshotChecker', () => {
         assertPassed(results, true);
     });
 
-    it('should fail when mandatoryElementCount is > 10 and previous report and 0 in current report', () => {
+    it('should pass when mandatoryElementCount is 0 in one of the reports and status code 200 in both', () => {
+        const rules = { mandatoryElement: { selector: ['//selector'], hysteresis: 10 } };
+        const previousReport = [
+            { url: 'https://a.b/c', mandatoryElementCount: '9', code: '200' },
+            { url: 'https://a.b/d', mandatoryElementCount: '19', code: '200' },
+            { url: 'https://a.b/e', mandatoryElementCount: '0', code: '200' },
+            { url: 'https://a.b/f', mandatoryElementCount: '0', code: '200' },
+        ];
+        const currentReport = [
+            { url: 'https://a.b/c', mandatoryElementCount: 0, code: 200 },
+            { url: 'https://a.b/d', mandatoryElementCount: 0, code: 200 },
+            { url: 'https://a.b/e', mandatoryElementCount: 9, code: 200 },
+            { url: 'https://a.b/f', mandatoryElementCount: 19, code: 200 },
+        ];
+
+        const results = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
+
+        assertPassed(results, true);
+    });
+
+    it('should pass when mandatoryElementCount is < 10 in previous report and 0 in current report', () => {
+        const rules = { mandatoryElement: { selector: ['//selector'], hysteresis: 10 } };
+        const previousReport = [{ url: 'https://a.b/c', mandatoryElementCount: '9', code: '200' }];
+        const currentReport = [{ url: 'https://a.b/c', mandatoryElementCount: 0, code: 404 }];
+
+        const results = snapshotChecker(rules, previousReport).finalCheck([], currentReport);
+
+        assertPassed(results, true);
+    });
+
+    it('should fail when mandatoryElementCount is > 10 in previous report and 0 in current report', () => {
         const rules = { mandatoryElement: { selector: ['//selector'], hysteresis: 10 } };
         const previousReport = [{ url: 'https://a.b/c', mandatoryElementCount: '11', code: '200' }];
         const currentReport = [{ url: 'https://a.b/c', mandatoryElementCount: 0, code: 404 }];
