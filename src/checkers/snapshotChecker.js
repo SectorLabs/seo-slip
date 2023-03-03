@@ -29,6 +29,8 @@ module.exports = (snapshotRules, previousReport) => {
         Number(reportItem['mandatoryElementCount']) > 0 &&
         Number(reportItem['code']) === 200;
 
+    const isIgnoredUrl = (url) => ignoreUrls.some((ignoreUrl) => url.includes(ignoreUrl));
+
     return {
         analysis: (queueItem, responseBody, response) => {
             const isHtmlDoc = isHtmlDocument(responseBody, response);
@@ -57,9 +59,7 @@ module.exports = (snapshotRules, previousReport) => {
                 const previousReportItem = previousReportMap[url];
                 const reportItem = reportMap[url];
                 if (!reportItem) {
-                    if (
-                        !ignoreUrls.some((ignoreUrl) => previousReportItem.url.includes(ignoreUrl))
-                    ) {
+                    if (!isIgnoredUrl(previousReportItem.url)) {
                         missingUrls.push(url);
                     }
                 } else {
@@ -71,7 +71,7 @@ module.exports = (snapshotRules, previousReport) => {
                         if (
                             previousValue !== serializedValue &&
                             ignoreColumns.indexOf(key) === -1 &&
-                            !ignoreUrls.some((ignoreUrl) => url.includes(ignoreUrl)) &&
+                            !isIgnoredUrl(url) &&
                             !key.startsWith('__') &&
                             !(
                                 isLowInventoryUrl(previousReportItem) &&
