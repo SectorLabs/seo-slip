@@ -266,15 +266,24 @@ The rules:
 {
     "missingUrlCountThreshold": number,
     "ignoreColumns": [string],
-    "ignoreUrls": [string]
+    "ignoreUrls": ["/regex1/", "/regex2/"],
+    "mandatoryElement": {
+        "selector": string,
+        "hysteresis": number,
+    }
 }
 ```
-The default value `missingUrlCountThreshold` of is 30. In case more than `missingUrlCountThreshold`% URLs from the previous report are not found in the new report then it's an error.
+The default value `missingUrlCountThreshold` of is 0.1. In case more than `missingUrlCountThreshold`% URLs from the previous report are not found in the new report then it's an error.
 
 For each URL found in both the previous and the new report, the columns of the reports are compared as well.
 In case a single column is different then it's an error.
+
 The columns specified in `ignoreColumns` or prefixed with `__`, like `__downloadTime`, are skipped from the comparison.
-The URLs specified in `ignoreUrls` are skipped from the comparison, however the total URL count includes these URLs as well.
+
+The URLs specified in `ignoreUrls` are skipped from the comparison and also from the threshold check. Note that the values of the `ignoreUrls` are paths, not full URLs.
+
+SnapshotChecker also fails when `statusCode` is different from the previous report. This becomes a problem when we have URLS with frequent flip between `200` and `404`. URLS are considered low inventory where `selector` elements are less than `hysteresis`. `selector` helps us to determine certain URLS which are more prone to frequent switch of `statusCode` from `200` to `404` or vice versa. Such 
+URLS are then ignored from `snapshotChecker`.
  
 
 ### StatusCodeChecker
