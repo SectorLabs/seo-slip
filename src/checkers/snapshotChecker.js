@@ -6,7 +6,7 @@ const { newMessage, newEmptyItemResult } = require('../reporting');
 module.exports = (snapshotRules, previousReport) => {
     const name = 'snapshotChecker';
 
-    const missingUrlCountThreshold = (snapshotRules || {}).missingUrlCountThreshold || 0.3;
+    const missingUrlCountThreshold = (snapshotRules || {}).missingUrlCountThreshold || 0.1;
     const ignoreColumns = (snapshotRules || {}).ignoreColumns || [];
     const ignoreUrls = (snapshotRules || {}).ignoreUrls || [];
     const mandatoryElement = (snapshotRules || {}).mandatoryElement || [];
@@ -35,7 +35,9 @@ module.exports = (snapshotRules, previousReport) => {
         Number(reportItem['mandatoryElementCount']) > 0 &&
         Number(reportItem['code']) === 200;
 
-    const isIgnoredUrl = (url) => ignoreUrls.some((ignoreUrl) => url.includes(ignoreUrl));
+    const isIgnoredUrl = (url) => {
+        return ignoreUrls.find((ignoreUrl) => url.match(ignoreUrl));
+    };
 
     return {
         analysis: (queueItem, responseBody, response) => {
@@ -90,8 +92,8 @@ module.exports = (snapshotRules, previousReport) => {
                                 Number(previousReportItem['code']) === 404
                             ) &&
                             !(
-                                Number(reportItem['mandatoryElementCount']) > 0 &&
-                                Number(previousReportItem['mandatoryElementCount']) > 0 &&
+                                Number(reportItem['mandatoryElementCount']) >= 0 &&
+                                Number(previousReportItem['mandatoryElementCount']) >= 0 &&
                                 Number(reportItem['code']) === 200 &&
                                 Number(previousReportItem['code']) === 200
                             )
