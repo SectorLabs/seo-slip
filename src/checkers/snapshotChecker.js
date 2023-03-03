@@ -6,10 +6,16 @@ const { newMessage, newEmptyItemResult } = require('../reporting');
 module.exports = (snapshotRules, previousReport) => {
     const name = 'snapshotChecker';
 
-    const missingUrlCountThreshold = (snapshotRules || {}).missingUrlCountThreshold || 0.3;
+    const missingUrlCountThreshold = (snapshotRules || {}).missingUrlCountThreshold || 0.1;
     const ignoreColumns = (snapshotRules || {}).ignoreColumns || [];
     const ignoreUrls = (snapshotRules || {}).ignoreUrls || [];
     const mandatoryElement = (snapshotRules || {}).mandatoryElement || [];
+    const mandatoryElementSelector = Object.keys(mandatoryElement).length
+        ? mandatoryElement.selector
+        : '';
+    const mandatoryElementHysteresis = Object.keys(mandatoryElement).length
+        ? mandatoryElement.hysteresis
+        : 0;
 
     const previousReportMap = previousReport.reduce((acc, itemReport) => {
         acc[itemReport['url']] = itemReport;
@@ -18,16 +24,18 @@ module.exports = (snapshotRules, previousReport) => {
 
     const getMandatoryElement = (responseBody) => {
         const body = xpath.fromPageSource(responseBody);
-        const hrefAttributeValue = tryGetContentByXPath(body, mandatoryElement.selector).join('-');
+        const hrefAttributeValue = tryGetContentByXPath(body, mandatoryElementSelector).join('-');
         return hrefAttributeValue;
     };
 
     const getMandatoryElementCount = (string) => (string === '' ? 0 : string.split('-').length);
 
     const isLowInventoryUrl = (reportItem) =>
-        Number(reportItem['mandatoryElementCount']) < mandatoryElement.hysteresis &&
+        Number(reportItem['mandatoryElementCount']) < mandatoryElementHysteresis &&
         Number(reportItem['mandatoryElementCount']) > 0 &&
         Number(reportItem['code']) === 200;
+
+    const isIgnoredUrl = (url) => ignoreUrls.find((ignoreUrl) => url.match(ignoreUrl));
 
     return {
         analysis: (queueItem, responseBody, response) => {
@@ -57,7 +65,9 @@ module.exports = (snapshotRules, previousReport) => {
                 const previousReportItem = previousReportMap[url];
                 const reportItem = reportMap[url];
                 if (!reportItem) {
-                    missingUrls.push(url);
+                    if (!isIgnoredUrl(previousReportItem.url)) {
+                        missingUrls.push(url);
+                    }
                 } else {
                     Object.keys(previousReportItem).forEach((key) => {
                         const previousValue = previousReportItem[key];
@@ -67,7 +77,7 @@ module.exports = (snapshotRules, previousReport) => {
                         if (
                             previousValue !== serializedValue &&
                             ignoreColumns.indexOf(key) === -1 &&
-                            ignoreUrls.indexOf(url) === -1 &&
+                            !isIgnoredUrl(url) &&
                             !key.startsWith('__') &&
                             !(
                                 isLowInventoryUrl(previousReportItem) &&
@@ -80,8 +90,8 @@ module.exports = (snapshotRules, previousReport) => {
                                 Number(previousReportItem['code']) === 404
                             ) &&
                             !(
-                                Number(reportItem['mandatoryElementCount']) > 0 &&
-                                Number(previousReportItem['mandatoryElementCount']) > 0 &&
+                                Number(reportItem['mandatoryElementCount']) >= 0 &&
+                                Number(previousReportItem['mandatoryElementCount']) >= 0 &&
                                 Number(reportItem['code']) === 200 &&
                                 Number(previousReportItem['code']) === 200
                             )
