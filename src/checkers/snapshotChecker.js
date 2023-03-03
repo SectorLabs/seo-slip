@@ -57,7 +57,11 @@ module.exports = (snapshotRules, previousReport) => {
                 const previousReportItem = previousReportMap[url];
                 const reportItem = reportMap[url];
                 if (!reportItem) {
-                    missingUrls.push(url);
+                    if (
+                        !ignoreUrls.some((ignoreUrl) => previousReportItem.url.includes(ignoreUrl))
+                    ) {
+                        missingUrls.push(url);
+                    }
                 } else {
                     Object.keys(previousReportItem).forEach((key) => {
                         const previousValue = previousReportItem[key];
@@ -67,7 +71,7 @@ module.exports = (snapshotRules, previousReport) => {
                         if (
                             previousValue !== serializedValue &&
                             ignoreColumns.indexOf(key) === -1 &&
-                            ignoreUrls.indexOf(url) === -1 &&
+                            !ignoreUrls.some((ignoreUrl) => url.includes(ignoreUrl)) &&
                             !key.startsWith('__') &&
                             !(
                                 isLowInventoryUrl(previousReportItem) &&
@@ -103,6 +107,7 @@ module.exports = (snapshotRules, previousReport) => {
                 1 -
                 (Object.keys(previousReportMap).length - missingUrls.length) /
                     Object.keys(previousReportMap).length;
+
             if (missingUrlPercentage >= missingUrlCountThreshold) {
                 result.passed = false;
                 result.messages.push(
