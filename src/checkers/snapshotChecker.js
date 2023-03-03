@@ -10,6 +10,12 @@ module.exports = (snapshotRules, previousReport) => {
     const ignoreColumns = (snapshotRules || {}).ignoreColumns || [];
     const ignoreUrls = (snapshotRules || {}).ignoreUrls || [];
     const mandatoryElement = (snapshotRules || {}).mandatoryElement || [];
+    const mandatoryElementSelector = Object.keys(mandatoryElement).length
+        ? mandatoryElement.selector
+        : '';
+    const mandatoryElementHysteresis = Object.keys(mandatoryElement).length
+        ? mandatoryElement.hysteresis
+        : 0;
 
     const previousReportMap = previousReport.reduce((acc, itemReport) => {
         acc[itemReport['url']] = itemReport;
@@ -18,14 +24,14 @@ module.exports = (snapshotRules, previousReport) => {
 
     const getMandatoryElement = (responseBody) => {
         const body = xpath.fromPageSource(responseBody);
-        const hrefAttributeValue = tryGetContentByXPath(body, mandatoryElement.selector).join('-');
+        const hrefAttributeValue = tryGetContentByXPath(body, mandatoryElementSelector).join('-');
         return hrefAttributeValue;
     };
 
     const getMandatoryElementCount = (string) => (string === '' ? 0 : string.split('-').length);
 
     const isLowInventoryUrl = (reportItem) =>
-        Number(reportItem['mandatoryElementCount']) < mandatoryElement.hysteresis &&
+        Number(reportItem['mandatoryElementCount']) < mandatoryElementHysteresis &&
         Number(reportItem['mandatoryElementCount']) > 0 &&
         Number(reportItem['code']) === 200;
 
