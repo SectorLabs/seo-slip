@@ -107,8 +107,10 @@ module.exports = (fullPath, maxDepth, variables, checkers, done) => {
     crawler.on('fetch404', fetchCompleted);
     crawler.on('fetch410', fetchCompleted);
     crawler.on('fetcherror', fetchCompleted);
-    crawler.on('fetchprevented', (queueItem) =>
-        console.log(`fetch for url=${queueItem.url} prevented by the rules`)
+    crawler.on(
+        'fetchprevented',
+        (queueItem) => console.log(`fetch for url=${queueItem.url} prevented by the rules`),
+        fetchCompleted
     );
     crawler.on('complete', crawlCompleted);
 
