@@ -36,6 +36,8 @@ module.exports = (fullPath, maxDepth, variables, checkers, done) => {
     crawler.decodeResponses = variables.decodeResponses;
     crawler.timeout = variables.timeout || 60000;
     crawler.customHeaders = variables.customHeaders;
+    crawler.parseHTMLComments = variables.parseHTMLComments;
+    crawler.parseScriptTags = variables.parseScriptTags;
 
     crawler.httpAgent = http.Agent({ keepAlive: true });
     crawler.httpsAgent = https.Agent({ keepAlive: true });
