@@ -44,8 +44,13 @@ module.exports = (fullPath, maxDepth, variables, checkers, done) => {
 
     const skipUrls = (variables.skipUrls || []).map((str) => new RegExp(str));
     crawler.addFetchCondition((queueItem, referrerQueueItem, callback) => {
-        const fetch = !skipUrls.some((skipUrl) => skipUrl.test(queueItem.url));
-        callback(null, fetch);
+        if (queueItem === referrerQueueItem) {
+            const fetch = false
+            callback(null, fetch)
+        } else {
+            const fetch = !skipUrls.some((skipUrl) => skipUrl.test(queueItem.url));
+            callback(null, fetch);
+        }
     });
 
     const header = new Set();
