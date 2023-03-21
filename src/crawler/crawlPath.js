@@ -43,10 +43,11 @@ module.exports = (fullPath, maxDepth, variables, checkers, done) => {
     crawler.httpsAgent = https.Agent({ keepAlive: true });
 
     const skipUrls = (variables.skipUrls || []).map((str) => new RegExp(str));
+
     crawler.addFetchCondition((queueItem, referrerQueueItem, callback) => {
         if (queueItem === referrerQueueItem) {
-            const fetch = false
-            callback(null, fetch)
+            const fetch = false;
+            callback(null, fetch);
         } else {
             const fetch = !skipUrls.some((skipUrl) => skipUrl.test(queueItem.url));
             callback(null, fetch);
