@@ -118,6 +118,41 @@ module.exports = (fullPath, maxDepth, variables, checkers, done) => {
     crawler.on('fetchprevented', (queueItem) =>
         console.log(`fetch for url=${queueItem.url} prevented by the rules`)
     );
+
+    crawler.on('fetchtimeout', (queueItem) =>
+        console.log(`fetch for url=${queueItem.url} time out`)
+    );
+
+    crawler.on('fetchclienterror', (queueItem, error) =>
+        console.log(`fetch for url=${queueItem.url} client fetch error: ${error}`)
+    );
+
+    const originalEmit = crawler.emit;
+    crawler.emit = function (evtName, queueItem) {
+        crawler.queue.countItems({ fetched: true }, function (err, completeCount) {
+            if (err) {
+                throw err;
+            }
+
+            crawler.queue.getLength(function (err, length) {
+                if (err) {
+                    throw err;
+                }
+
+                console.log(
+                    'fetched %d of %d — %d open requests, %d open listeners',
+                    completeCount,
+                    length,
+                    crawler._openRequests.length,
+                    crawler._openListeners
+                );
+            });
+        });
+
+        console.log(evtName, queueItem ? (queueItem.url ? queueItem.url : queueItem) : null);
+        originalEmit.apply(crawler, arguments);
+    };
+
     crawler.on('complete', crawlCompleted);
 
     Promise.all(
