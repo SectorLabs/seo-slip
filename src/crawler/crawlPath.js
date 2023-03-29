@@ -3,6 +3,9 @@ const https = require('https');
 
 const Crawler = require('simplecrawler');
 
+let crawlStarts = 0;
+let crawlStops = 0;
+
 const {
     newEmptyAnalysis,
     newEmptyAnalyses,
@@ -129,7 +132,12 @@ module.exports = (fullPath, maxDepth, variables, checkers, done) => {
     );
 
     crawler.on('crawlstart', () => {
-        console.log(crawler.initialURL);
+        crawlStarts += 1;
+    });
+
+    crawler.on('complete', () => {
+        crawlStops += 1;
+        crawlCompleted;
     });
 
     const originalEmit = crawler.emit;
@@ -154,7 +162,8 @@ module.exports = (fullPath, maxDepth, variables, checkers, done) => {
                     queueItem?.status ?? queueItem,
                     queueItem?.fetched ?? queueItem,
                     queueItem?.stateData.code ?? queueItem,
-                    queueItem?.referrer ?? queueItem
+                    queueItem?.referrer ?? queueItem,
+                    crawler.queue[-3]
                 );
             });
         });
@@ -162,8 +171,6 @@ module.exports = (fullPath, maxDepth, variables, checkers, done) => {
         console.log(evtName, queueItem ? (queueItem.url ? queueItem.url : queueItem) : null);
         originalEmit.apply(crawler, arguments);
     };
-
-    crawler.on('complete', crawlCompleted);
 
     Promise.all(
         checkers
