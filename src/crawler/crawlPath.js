@@ -132,14 +132,6 @@ module.exports = (fullPath, maxDepth, variables, checkers, done) => {
         console.log(crawler.initialURL);
     });
 
-    crawler.on('discoverycomplete', () => {
-        console.log('____________');
-        crawler.queue.forEach((element) => {
-            console.log(`${element.url} - ${element.fetched} - ${element.status}`);
-        });
-        console.log('____________');
-    });
-
     const originalEmit = crawler.emit;
     crawler.emit = function (evtName, queueItem) {
         crawler.queue.countItems({ fetched: true }, function (err, completeCount) {
@@ -157,7 +149,12 @@ module.exports = (fullPath, maxDepth, variables, checkers, done) => {
                     completeCount,
                     length,
                     crawler._openRequests.length,
-                    crawler._openListeners
+                    crawler._openListeners,
+                    queueItem.url,
+                    queueItem.status,
+                    queueItem.fetched,
+                    queueItem.stateData.code,
+                    queueItem.referrer
                 );
             });
         });
