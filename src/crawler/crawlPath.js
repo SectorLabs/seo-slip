@@ -128,7 +128,15 @@ module.exports = (fullPath, maxDepth, variables, checkers, done) => {
         console.log(`fetch for url=${queueItem.url} client fetch error: ${error}`)
     );
 
-    crawler.on('crawlstart', () => console.log(crawler.initialURL));
+    crawler.on('crawlstart', () => {
+        console.log(crawler.initialURL);
+    });
+
+    crawler.on('discoverycomplete', () => {
+        console.log('____________');
+        console.log(crawler.queue);
+        console.log('____________');
+    });
 
     const originalEmit = crawler.emit;
     crawler.emit = function (evtName, queueItem) {
