@@ -134,7 +134,9 @@ module.exports = (fullPath, maxDepth, variables, checkers, done) => {
 
     crawler.on('discoverycomplete', () => {
         console.log('____________');
-        console.log(crawler.queue);
+        crawler.queue.forEach((element) => {
+            console.log(`${element.url} - ${element.fetched} - ${element.status}`);
+        });
         console.log('____________');
     });
 
