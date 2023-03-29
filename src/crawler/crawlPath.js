@@ -3,9 +3,6 @@ const https = require('https');
 
 const Crawler = require('simplecrawler');
 
-let crawlStarts = 0;
-let crawlStops = 0;
-
 const {
     newEmptyAnalysis,
     newEmptyAnalyses,
@@ -119,6 +116,7 @@ module.exports = (fullPath, maxDepth, variables, checkers, done) => {
     crawler.on('fetch404', fetchCompleted);
     crawler.on('fetch410', fetchCompleted);
     crawler.on('fetcherror', fetchCompleted);
+
     crawler.on('fetchprevented', (queueItem) =>
         console.log(`fetch for url=${queueItem.url} prevented by the rules`)
     );
@@ -131,14 +129,7 @@ module.exports = (fullPath, maxDepth, variables, checkers, done) => {
         console.log(`fetch for url=${queueItem.url} client fetch error: ${error}`)
     );
 
-    crawler.on('crawlstart', () => {
-        crawlStarts += 1;
-    });
-
-    crawler.on('complete', () => {
-        crawlStops += 1;
-        crawlCompleted;
-    });
+    crawler.on('complete', crawlCompleted);
 
     const originalEmit = crawler.emit;
     crawler.emit = function (evtName, queueItem) {
