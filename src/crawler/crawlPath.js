@@ -150,11 +150,11 @@ module.exports = (fullPath, maxDepth, variables, checkers, done) => {
                     length,
                     crawler._openRequests.length,
                     crawler._openListeners,
-                    queueItem.url,
-                    queueItem.status,
-                    queueItem.fetched,
-                    queueItem.stateData.code,
-                    queueItem.referrer
+                    queueItem?.url ?? queueItem,
+                    queueItem?.status ?? queueItem,
+                    queueItem?.fetched ?? queueItem,
+                    queueItem?.stateData.code ?? queueItem,
+                    queueItem?.referrer ?? queueItem
                 );
             });
         });
