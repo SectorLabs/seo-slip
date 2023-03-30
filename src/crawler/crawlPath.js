@@ -143,18 +143,20 @@ module.exports = (fullPath, maxDepth, variables, checkers, done) => {
                     throw err;
                 }
 
+                const keys = Object.keys(crawler.queue);
+
                 console.log(
                     'fetched %d of %d — %d open requests, %d open listeners',
                     completeCount,
                     length,
                     crawler._openRequests.length,
                     crawler._openListeners,
-                    queueItem?.url ?? queueItem,
-                    queueItem?.status ?? queueItem,
-                    queueItem?.fetched ?? queueItem,
-                    queueItem?.stateData.code ?? queueItem,
-                    queueItem?.referrer ?? queueItem,
-                    crawler.queue[-3]
+                    keys
+                        .slice(-4)
+                        .slice(0, 3)
+                        .forEach((element) => {
+                            crawler.queue.get(element, (err, queueItem) => console.log(queueItem));
+                        })
                 );
             });
         });
