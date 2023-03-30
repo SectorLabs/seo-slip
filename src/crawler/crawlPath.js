@@ -45,7 +45,7 @@ module.exports = (fullPath, maxDepth, variables, checkers, done) => {
     const skipUrls = (variables.skipUrls || []).map((str) => new RegExp(str));
 
     crawler.addFetchCondition((queueItem, referrerQueueItem, callback) => {
-        if (queueItem.url === referrerQueueItem.url) {
+        if (queueItem.referrer === undefined) {
             console.log('Skipped same URL!');
             const fetch = false;
             callback(null, fetch);
