@@ -105,7 +105,7 @@ module.exports = (fullPath, maxDepth, variables, checkers, done) => {
             .map((checker) => checker.shouldStop(queueItem))
             .some((shouldStop) => shouldStop);
         if (stop) {
-            crawler.stop();
+            crawler.stop(true);
             crawlCompleted();
         }
     };
